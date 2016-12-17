@@ -4,6 +4,10 @@ using namespace cv;
 extern const int proj_width = 1024;
 extern const int proj_height = 768;
 
+extern const char* images_group_dir = "partten_images%02d\\";
+extern const int images_group_dir_length = 18;
+extern const String images_file = "pattern_cam1_im";
+extern const String imagesName_file = "imgName.yaml";
 extern const String imgType = ".jpg";
 
 extern const bool isThresh = true;

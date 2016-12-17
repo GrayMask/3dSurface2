@@ -3,6 +3,10 @@ using namespace cv;
 extern const int proj_width;
 extern const int proj_height;
 
+extern const char* images_group_dir;
+extern const int images_group_dir_length;
+extern const String images_file;
+extern const String imagesName_file;
 extern const String imgType;
 
 extern const bool isThresh;
