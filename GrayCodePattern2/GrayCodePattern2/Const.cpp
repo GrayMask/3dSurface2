@@ -6,9 +6,10 @@ extern const int proj_height = 768;
 
 extern const char* images_group_dir = "partten_images%02d\\";
 extern const int images_group_dir_length = 18;
-extern const String images_file = "pattern_cam1_im";
+extern const String images_file = "pattern_im";
 extern const String imagesName_file = "imgName.yaml";
 extern const String imgType = ".jpg";
+extern const char* sfm_group_dir = "sfm_images\\";
 
 extern const bool isThresh = true;
 extern const size_t white_thresh = 0;

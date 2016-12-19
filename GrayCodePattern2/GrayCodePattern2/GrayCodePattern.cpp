@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-void GrayCodePattern::getGrayCodeImages()
+int GrayCodePattern::getGrayCodeImages()
 {
 	structured_light::GrayCodePattern::Params params;
 	params.width = proj_width;
@@ -43,7 +43,6 @@ void GrayCodePattern::getGrayCodeImages()
 	if (_access(expr_dir.c_str(), 6) == -1)
 	{
 		int result = _mkdir(expr_dir.c_str());
-		cout << result << endl;
 	}
 	// Turning off autofocus
 	cap1.set(CAP_PROP_SETTINGS, 1);
@@ -59,9 +58,7 @@ void GrayCodePattern::getGrayCodeImages()
 			String imagesDir = expr_dir + String(imagesGroupDirTemp);
 			if (_access(imagesDir.c_str(), 6) == -1)
 			{
-				cout << imagesDir << endl;
 				int result = _mkdir(imagesDir.c_str());
-				cout << result << endl;
 			}
 			FileStorage fs(imagesDir + imagesName_file, FileStorage::WRITE);
 			fs << "imagelist" << "[";
@@ -102,8 +99,7 @@ void GrayCodePattern::getGrayCodeImages()
 			j++;
 		}
 	}
-	
-	// the camera will be deinitialized automatically in VideoCapture destructor
+	return j;
 }
 
 

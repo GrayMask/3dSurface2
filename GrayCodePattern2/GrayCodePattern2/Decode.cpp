@@ -125,39 +125,8 @@ static int optimizeDisparityMap(const Mat disparityMap, Mat& result)
 	return downThresh;
 }
 
-int Decode::executeDecode() {
-	structured_light::GrayCodePattern::Params params;
-	params.width = proj_width;
-	params.height = proj_height;
-	// Set up GraycodePattern with params
-	Ptr<structured_light::GrayCodePattern> graycode = structured_light::GrayCodePattern::create(params);
-	if (isThresh) {
-		graycode->setWhiteThreshold(white_thresh);
-		graycode->setBlackThreshold(black_thresh);
-	}
-	FileStorage fs(calib_file, FileStorage::READ);
-	if (!fs.isOpened())
-	{
-		cout << "Failed to open Calibration Data File." << endl;
-		return -1;
-	}
-	// Loading calibration parameters
-	Mat intrinsics, distCoeffs;
-	fs["intrinsics"] >> intrinsics;
-	fs["distorsion"] >> distCoeffs;
-	if ((!intrinsics.data) || (!distCoeffs.data))
-	{
-		cout << "Failed to load cameras calibration parameters" << endl;
-		return -1;
-	}
-	int i = 0;
-	while (1) {
-		int result = decodeTwoGroupOfImg(graycode, i, intrinsics, distCoeffs);
-		if (result !=0) {
-			break;
-		}
-		i++;
-	}
+static void getRAndTMatrix(const int count, Mat& R, Mat& T) {
+
 }
 
 static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const int count, const Mat& intrinsics, const Mat& distCoeffs)
@@ -180,8 +149,9 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 	cout << "Rectifying images..." << endl;
 	Mat R1, R2, P1, P2, Q;
 	Rect validRoi[2];
-	// TODO
+
 	Mat R, T;
+	getRAndTMatrix(count, R, T);
 	stereoRectify(intrinsics, distCoeffs, intrinsics, distCoeffs, imagesSize, R, T, R1, R2, P1, P2, Q, 0,
 		-1, imagesSize, &validRoi[0], &validRoi[1]);
 	Mat map1x, map1y, map2x, map2y;
@@ -276,4 +246,39 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 	}
 	waitKey();
 	return 0;
+}
+
+int Decode::executeDecode() {
+	structured_light::GrayCodePattern::Params params;
+	params.width = proj_width;
+	params.height = proj_height;
+	// Set up GraycodePattern with params
+	Ptr<structured_light::GrayCodePattern> graycode = structured_light::GrayCodePattern::create(params);
+	if (isThresh) {
+		graycode->setWhiteThreshold(white_thresh);
+		graycode->setBlackThreshold(black_thresh);
+	}
+	FileStorage fs(calib_file, FileStorage::READ);
+	if (!fs.isOpened())
+	{
+		cout << "Failed to open Calibration Data File." << endl;
+		return -1;
+	}
+	// Loading calibration parameters
+	Mat intrinsics, distCoeffs;
+	fs["intrinsics"] >> intrinsics;
+	fs["distorsion"] >> distCoeffs;
+	if ((!intrinsics.data) || (!distCoeffs.data))
+	{
+		cout << "Failed to load cameras calibration parameters" << endl;
+		return -1;
+	}
+	int i = 0;
+	while (1) {
+		int result = decodeTwoGroupOfImg(graycode, i, intrinsics, distCoeffs);
+		if (result !=0) {
+			break;
+		}
+		i++;
+	}
 }

@@ -3,6 +3,6 @@
 class GrayCodePattern
 {
 public:
-	static void getGrayCodeImages();
+	static int getGrayCodeImages();
 };
 #endif

@@ -1,8 +1,10 @@
 #include "GrayCodePattern.h"
+#include "Sfm.h"
 #include "Decode.h"
 
 int main(int argh, char* argv[])
 {
-	GrayCodePattern::getGrayCodeImages();
-	Decode::executeDecode();
+	int numOfGroup = GrayCodePattern::getGrayCodeImages();
+	Sfm::executeSfm(numOfGroup);
+	//Decode::executeDecode();
 }
