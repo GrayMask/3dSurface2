@@ -125,11 +125,11 @@ static int optimizeDisparityMap(const Mat disparityMap, Mat& result)
 	return downThresh;
 }
 
-static void getRAndTMatrix(const int count, Mat& R, Mat& T) {
-
+static void readSFMFile(int& numOfGroup, vector<Mat>& R, vector<Mat>& T) {
+	
 }
 
-static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const int count, const Mat& intrinsics, const Mat& distCoeffs)
+static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const int count, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T)
 {
 	vector<string> imagelist;
 	bool ok = readStringList(count, imagelist);
@@ -150,8 +150,6 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 	Mat R1, R2, P1, P2, Q;
 	Rect validRoi[2];
 
-	Mat R, T;
-	getRAndTMatrix(count, R, T);
 	stereoRectify(intrinsics, distCoeffs, intrinsics, distCoeffs, imagesSize, R, T, R1, R2, P1, P2, Q, 0,
 		-1, imagesSize, &validRoi[0], &validRoi[1]);
 	Mat map1x, map1y, map2x, map2y;

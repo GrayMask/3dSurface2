@@ -8,7 +8,8 @@ extern const int images_group_dir_length;
 extern const String images_file;
 extern const String imagesName_file;
 extern const String imgType;
-extern const char* sfm_group_dir;
+extern const String sfm_dir;
+extern const String sfm_file;
 
 extern const bool isThresh;
 extern const size_t white_thresh;
