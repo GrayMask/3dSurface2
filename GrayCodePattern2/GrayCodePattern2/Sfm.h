@@ -3,6 +3,6 @@
 class Sfm
 {
 public:
-	static void executeSfm(int const numOfGroup);
+	static void executeSfm();
 };
 #endif

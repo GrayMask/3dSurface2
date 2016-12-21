@@ -4,7 +4,7 @@
 
 int main(int argh, char* argv[])
 {
-	int numOfGroup = GrayCodePattern::getGrayCodeImages();
-	Sfm::executeSfm(numOfGroup);
-	//Decode::executeDecode();
+	//GrayCodePattern::getGrayCodeImages();
+	//Sfm::executeSfm();
+	Decode::executeDecode();
 }

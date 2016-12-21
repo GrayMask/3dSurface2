@@ -4,17 +4,16 @@
 #include <cmath>
 #include "Sfm.h"
 #include "Tools.h"
-#include "Const.h"
 #include "Path.h"
+#include "Const.h"
 
 using namespace std;
 
 void makeSfmDir(int const numOfGroup) {
 	// make a new dir
-	String sfmDir = expr_dir + sfm_group_dir;
-	if (_access(sfmDir.c_str(), 6) == -1)
+	if (_access((root_dir + sfm_dir).c_str(), 6) == -1)
 	{
-		_mkdir(sfmDir.c_str());
+		_mkdir((root_dir + sfm_dir).c_str());
 	}
 	int whiteImgIndex = log(proj_width) / log(2) * 4 + 1;
 	ostringstream name;
@@ -24,13 +23,15 @@ void makeSfmDir(int const numOfGroup) {
 		// copy images to the new dir
 		char* imagesGroupDirTemp1 = new char[images_group_dir_length];
 		sprintf(imagesGroupDirTemp1, images_group_dir, i);
-		String imagesDir1 = expr_dir + String(imagesGroupDirTemp1) + imagesName;
+		String imagesDir1 = root_dir + expr_dir + String(imagesGroupDirTemp1) + imagesName;
 		ostringstream num;
 		num << i;
-		Tools::copyFile(imagesDir1, sfmDir + num.str() + imgType);
+		Tools::copyFile(imagesDir1, root_dir + sfm_dir + num.str() + imgType);
 	}
 }
 
-void Sfm::executeSfm(int const numOfGroup) {
-	makeSfmDir(numOfGroup);
+void Sfm::executeSfm() {
+	int groupNum;
+	Tools::readGroupNumFile(groupNum);
+	makeSfmDir(groupNum);
 }

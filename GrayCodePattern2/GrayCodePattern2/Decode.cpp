@@ -7,8 +7,9 @@
 #include <opencv2/calib3d.hpp>
 #include <opencv2/viz.hpp>
 #include "Decode.h"
-#include "Const.h"
 #include "Path.h"
+#include "Const.h"
+#include "Tools.h"
 
 using namespace cv;
 using namespace std;
@@ -16,48 +17,19 @@ using namespace std;
 #define cvQueryHistValue_1D( hist, idx0 ) \
     ((float)cvGetReal1D( (hist)->bins, (idx0)))
 
-int abWrite(const Mat &im, const string &fname)
-{
-	ofstream ouF;
-	ouF.open(fname.c_str(), std::ofstream::binary);
-	if (!ouF)
-	{
-		cerr << "failed to open the file : " << fname << endl;
-		return 0;
-	}
-	for (int r = 0; r < im.rows; r++)
-	{
-		ouF.write(reinterpret_cast<const char*>(im.ptr(r)), im.cols*im.elemSize());
-	}
-	ouF.close();
-	return 1;
-}
-
-
-static bool readStringList(const int count, vector<string>& l)
+static bool readImageList(const int count1, const int count2, vector<string>& l)
 {
 	l.resize(0);
-	for (int i = 0; i < 2; i++) {
-		char* imagesGroupDirTemp = new char[images_group_dir_length];
-		sprintf(imagesGroupDirTemp, images_group_dir, i + count);
-		String filename = expr_dir + String(imagesGroupDirTemp) + imagesName_file;
-		FileStorage fs(filename, FileStorage::READ);
-		if (!fs.isOpened())
-		{
-			cerr << "failed to open " << filename << endl;
-			return false;
-		}
-		FileNode n = fs.getFirstTopLevelNode();
-		if (n.type() != FileNode::SEQ)
-		{
-			cerr << "cam 1 images are not a sequence! FAIL" << endl;
-			return false;
-		}
-		FileNodeIterator it = n.begin(), it_end = n.end();
-		for (; it != it_end; ++it)
-		{
-			l.push_back((string)*it);
-		}
+	char* imagesGroupDirTemp = new char[images_group_dir_length];
+	sprintf(imagesGroupDirTemp, images_group_dir, count1);
+	String filename = root_dir + expr_dir + String(imagesGroupDirTemp) + imagesName_file;
+	if (Tools::readStringList(filename, l) == -1) {
+		return false;
+	}
+	sprintf(imagesGroupDirTemp, images_group_dir, count2);
+	filename = root_dir + expr_dir + String(imagesGroupDirTemp) + imagesName_file;
+	if (Tools::readStringList(filename, l) == -1) {
+		return false;
 	}
 	return true;
 }
@@ -125,19 +97,13 @@ static int optimizeDisparityMap(const Mat disparityMap, Mat& result)
 	return downThresh;
 }
 
-static void readSFMFile(int& numOfGroup, vector<Mat>& R, vector<Mat>& T) {
-	
+static void getRAndTBetweenTwoCamera(const Mat& R1, const Mat& T1, const Mat& R2, const Mat& T2, Mat& R, Mat& T) {
+	R = R1;
+	T = T1;
 }
 
-static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const int count, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T)
+static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T)
 {
-	vector<string> imagelist;
-	bool ok = readStringList(count, imagelist);
-	if (!ok || imagelist.empty())
-	{
-		cout << "can not open " << imagesName_file << " or the string list is empty" << endl;
-		return -1;
-	}
 	size_t numberOfPatternImages = graycode->getNumberOfPatternImages();
 	vector<vector<Mat> > captured_pattern;
 	captured_pattern.resize(2);
@@ -207,7 +173,7 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 		convertScaleAbs(disparityMap, scaledDisparityMap, 255 / (max - min), -min * 255 / (max - min));
 		myCalcHist(scaledDisparityMap);
 
-		abWrite(scaledDisparityMap, disparityMap_file);
+		Tools::writePic(scaledDisparityMap, root_dir + disparityMap_file);
 
 		applyColorMap(scaledDisparityMap, cm_disp, COLORMAP_RAINBOW);
 		// Show the result
@@ -243,7 +209,7 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 
 	}
 	waitKey();
-	return 0;
+	return 1;
 }
 
 int Decode::executeDecode() {
@@ -256,7 +222,7 @@ int Decode::executeDecode() {
 		graycode->setWhiteThreshold(white_thresh);
 		graycode->setBlackThreshold(black_thresh);
 	}
-	FileStorage fs(calib_file, FileStorage::READ);
+	FileStorage fs(root_dir + calib_file, FileStorage::READ);
 	if (!fs.isOpened())
 	{
 		cout << "Failed to open Calibration Data File." << endl;
@@ -271,12 +237,26 @@ int Decode::executeDecode() {
 		cout << "Failed to load cameras calibration parameters" << endl;
 		return -1;
 	}
-	int i = 0;
-	while (1) {
-		int result = decodeTwoGroupOfImg(graycode, i, intrinsics, distCoeffs);
-		if (result !=0) {
-			break;
+	int groupNum;
+	Tools::readGroupNumFile(groupNum);
+	for (int i = 0; i < groupNum - 1; i++) {
+		Mat R, T, R1, T1, R2, T2;
+		if (Tools::getSFMResult(i, R1, T1)) {
+			int j;
+			for (j = i + 1; j < groupNum; j++) {
+				if (Tools::getSFMResult(j, R2, T2)) {
+					getRAndTBetweenTwoCamera(R1, T1, R2, T2, R, T);
+					vector<string> imagelist;
+					bool ok = readImageList(i, j, imagelist);
+					if (!ok || imagelist.empty())
+					{
+						cout << "can not open " << imagesName_file << " or the string list is empty" << endl;
+						return -1;
+					}
+					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T);
+					break;
+				}
+			}
 		}
-		i++;
 	}
 }

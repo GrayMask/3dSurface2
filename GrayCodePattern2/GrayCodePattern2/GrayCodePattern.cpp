@@ -4,13 +4,14 @@
 #include <io.h>
 #include <direct.h>
 #include "GrayCodePattern.h"
-#include "Const.h"
 #include "Path.h"
+#include "Const.h"
+#include "Tools.h"
 
 using namespace cv;
 using namespace std;
 
-int GrayCodePattern::getGrayCodeImages()
+void GrayCodePattern::getGrayCodeImages()
 {
 	structured_light::GrayCodePattern::Params params;
 	params.width = proj_width;
@@ -40,9 +41,9 @@ int GrayCodePattern::getGrayCodeImages()
 		cout << "cam1 not opened!" << endl;
 		exit(-1);
 	}
-	if (_access(expr_dir.c_str(), 6) == -1)
+	if (_access((root_dir + expr_dir).c_str(), 6) == -1)
 	{
-		int result = _mkdir(expr_dir.c_str());
+		int result = _mkdir((root_dir + expr_dir).c_str());
 	}
 	// Turning off autofocus
 	cap1.set(CAP_PROP_SETTINGS, 1);
@@ -55,7 +56,7 @@ int GrayCodePattern::getGrayCodeImages()
 		else if (key == 13) {
 			char* imagesGroupDirTemp = new char[images_group_dir_length];
 			sprintf(imagesGroupDirTemp, images_group_dir, j);
-			String imagesDir = expr_dir + String(imagesGroupDirTemp);
+			String imagesDir = root_dir + expr_dir + String(imagesGroupDirTemp);
 			if (_access(imagesDir.c_str(), 6) == -1)
 			{
 				int result = _mkdir(imagesDir.c_str());
@@ -79,6 +80,7 @@ int GrayCodePattern::getGrayCodeImages()
 						ostringstream name;
 						name << i + 1;
 						String imagesFile = imagesDir + images_file + name.str() + imgType;
+						cout << imagesFile<<endl;
 						save1 = imwrite(imagesFile, frame1);
 						if (save1)
 						{
@@ -99,7 +101,7 @@ int GrayCodePattern::getGrayCodeImages()
 			j++;
 		}
 	}
-	return j;
+	Tools::writeGroupNumFile(j);
 }
 
 

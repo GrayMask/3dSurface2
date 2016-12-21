@@ -1,8 +1,15 @@
 #include <opencv2/core.hpp>;
 using namespace cv;
+
 extern const int proj_width;
 extern const int proj_height;
 
+// dir
+extern const String exprNum;
+extern const String expr_dir;
+extern const String calib_file;
+extern const String disparityMap_file;
+extern const String groupNum_file;
 extern const char* images_group_dir;
 extern const int images_group_dir_length;
 extern const String images_file;
