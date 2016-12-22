@@ -121,7 +121,7 @@ int Tools::getSFMResult(const int count, Mat& R, Mat& T) {
 	if (!in.is_open())
 	{
 		cout << "Error opening file";
-		return -1;
+		return 0;
 	}
 	ostringstream countStr;
 	countStr << count;
@@ -148,5 +148,5 @@ int Tools::getSFMResult(const int count, Mat& R, Mat& T) {
 			}
 		} while (goWithLine(in, 13));
 	}
-	return -1;
+	return 0;
 }

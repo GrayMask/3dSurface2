@@ -21,12 +21,12 @@ static bool readImageList(const int count1, const int count2, vector<string>& l)
 {
 	l.resize(0);
 	char* imagesGroupDirTemp = new char[images_group_dir_length];
-	sprintf(imagesGroupDirTemp, images_group_dir, count1);
+	sprintf(imagesGroupDirTemp, images_group_dir, count2);
 	String filename = root_dir + expr_dir + String(imagesGroupDirTemp) + imagesName_file;
 	if (Tools::readStringList(filename, l) == -1) {
 		return false;
 	}
-	sprintf(imagesGroupDirTemp, images_group_dir, count2);
+	sprintf(imagesGroupDirTemp, images_group_dir, count1);
 	filename = root_dir + expr_dir + String(imagesGroupDirTemp) + imagesName_file;
 	if (Tools::readStringList(filename, l) == -1) {
 		return false;
@@ -98,14 +98,16 @@ static int optimizeDisparityMap(const Mat disparityMap, Mat& result)
 }
 
 static void getRAndTBetweenTwoCamera(const Mat& R1, const Mat& T1, const Mat& R2, const Mat& T2, Mat& R, Mat& T) {
-	R = R1;
-	T = T1;
+	Mat R1T;
+	transpose(R1, R1T);
+	R = R2 * R1T;
+	T = T2 - R * T1;
 }
 
 static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T)
 {
 	size_t numberOfPatternImages = graycode->getNumberOfPatternImages();
-	vector<vector<Mat> > captured_pattern;
+	vector<vector<Mat>> captured_pattern;
 	captured_pattern.resize(2);
 	captured_pattern[0].resize(numberOfPatternImages);
 	captured_pattern[1].resize(numberOfPatternImages);
@@ -246,6 +248,9 @@ int Decode::executeDecode() {
 			for (j = i + 1; j < groupNum; j++) {
 				if (Tools::getSFMResult(j, R2, T2)) {
 					getRAndTBetweenTwoCamera(R1, T1, R2, T2, R, T);
+					cout << "Analyzing " << i << " and " << j << endl;
+					cout << R << endl;
+					cout << T << endl;
 					vector<string> imagelist;
 					bool ok = readImageList(i, j, imagelist);
 					if (!ok || imagelist.empty())
