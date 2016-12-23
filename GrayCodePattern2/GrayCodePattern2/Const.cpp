@@ -5,7 +5,7 @@ extern const int proj_width = 1024;
 extern const int proj_height = 768;
 
 // dir
-extern const String exprNum = "1";
+extern const String exprNum = "2";
 extern const String expr_dir = "expr" + exprNum + "\\";
 extern const String calib_file = "calibration_result\\camera.xml";
 extern const String disparityMap_file = "matlab\\disparityMap" + exprNum + ".txt";
@@ -25,6 +25,6 @@ extern const size_t black_thresh = 1;
 extern const bool isRemap = true;
 
 // Optimize disparity map
-extern const bool isOptimize = true;
-extern const float downPortion = 0.04;
+extern const bool isOptimize = false;
+extern const float downPortion = 0.001;
 extern const float upPortion = 0.98;
