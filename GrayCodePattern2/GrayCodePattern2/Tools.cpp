@@ -39,7 +39,7 @@ int Tools::copyFile(const String fromFile, const String toFile) {
 int Tools::writePic(const Mat& im, const String& fname)
 {
 	ofstream ouF;
-	ouF.open(fname.c_str(), std::ofstream::binary);
+	ouF.open(fname.c_str());
 	if (!ouF)
 	{
 		cerr << "failed to open the file : " << fname << endl;
@@ -47,7 +47,11 @@ int Tools::writePic(const Mat& im, const String& fname)
 	}
 	for (int r = 0; r < im.rows; r++)
 	{
-		ouF.write(reinterpret_cast<const char*>(im.ptr(r)), im.cols*im.elemSize());
+		for (int c = 0; c < im.cols; c++) {
+			ouF << im.at<float>(r, c);
+			ouF << " ";
+		}
+		ouF << "\n";
 	}
 	ouF.close();
 	return 1;

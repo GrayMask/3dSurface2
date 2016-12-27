@@ -66,7 +66,7 @@ static void myCalcHist(Mat gray_plane)
 	cvShowImage("H-S Histogram", hist_image);
 }
 
-bool sort_by_value(const uchar& obj1, const uchar& obj2)
+bool sort_by_value(const float& obj1, const float& obj2)
 {
 	return obj1 < obj2;
 }
@@ -74,10 +74,10 @@ bool sort_by_value(const uchar& obj1, const uchar& obj2)
 static int optimizeDisparityMap(const Mat disparityMap, Mat& result)
 {
 	// Find the mid value
-	int invalid = 0;// the invalid value
-	int length = disparityMap.rows * disparityMap.cols;
-	vector<uchar> array(disparityMap.data, disparityMap.data + length);
-	vector<uchar>::iterator it;
+	float invalid = 0;// the invalid value
+	std::vector<float> array;
+	array.assign((float*)disparityMap.datastart, (float*)disparityMap.dataend);
+	vector<float>::iterator it;
 	for (it = array.begin(); it != array.end();)
 	{
 		if (*it == invalid)
@@ -87,9 +87,9 @@ static int optimizeDisparityMap(const Mat disparityMap, Mat& result)
 	}
 	sort(array.begin(), array.end(), sort_by_value);
 	float numOfValid = array.size();
-	uchar max_value = array[numOfValid - 1];
-	uchar upThresh = array[numOfValid * upPortion];
-	uchar downThresh = array[numOfValid * downPortion];
+	float max_value = array[numOfValid - 1];
+	float upThresh = array[numOfValid * upPortion];
+	float downThresh = array[numOfValid * downPortion];
 
 	// Use threshold to filter the disparityMap
 	threshold(disparityMap, result, upThresh, max_value, THRESH_TOZERO_INV);
@@ -104,7 +104,7 @@ static void getRAndTBetweenTwoCamera(const Mat& R1, const Mat& T1, const Mat& R2
 	T = T2 - R * T1;
 }
 
-static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T)
+static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T, const int count)
 {
 	size_t numberOfPatternImages = graycode->getNumberOfPatternImages();
 	vector<vector<Mat>> captured_pattern;
@@ -159,10 +159,14 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 	Mat disparityMap;
 	bool decoded = graycode->decode(captured_pattern, disparityMap, blackImages, whiteImages,
 		structured_light::DECODE_3D_UNDERWORLD);
+	//cout << disparityMap;
 	disparityMap.convertTo(disparityMap, CV_32F);
 	if (isOptimize) {
 		int downThresh = optimizeDisparityMap(disparityMap, disparityMap);
 	}
+	ostringstream countStr;
+	countStr << count;
+	Tools::writePic(disparityMap, root_dir + disparityMap_file + countStr.str() + ".txt");
 	if (decoded)
 	{
 		cout << endl << "pattern decoded" << endl;
@@ -175,23 +179,20 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 		convertScaleAbs(disparityMap, scaledDisparityMap, 255 / (max - min), -min * 255 / (max - min));
 		myCalcHist(scaledDisparityMap);
 
-		Tools::writePic(scaledDisparityMap, root_dir + disparityMap_file);
-
 		applyColorMap(scaledDisparityMap, cm_disp, COLORMAP_RAINBOW);
 		// Show the result
 		resize(cm_disp, cm_disp, Size(640, 480));
 		imshow("cm disparity m", cm_disp);
 		imwrite("cv_disparity_m.png", cm_disp);
-		// Compute the point cloud
-		Mat pointcloud;
-		disparityMap.convertTo(disparityMap, CV_32FC1);
-		reprojectImageTo3D(disparityMap, pointcloud, Q, false, -1);
-		// Compute a mask to remove background
-		Mat dst, thresholded_disp;
-		threshold(scaledDisparityMap, thresholded_disp, 0, 255, THRESH_OTSU + THRESH_BINARY);
-		resize(thresholded_disp, dst, Size(640, 480));
 		imshow("threshold disp otsu", scaledDisparityMap);
 		imwrite("threshold_disp_otsu.png", scaledDisparityMap);
+		// Compute the point cloud
+		Mat pointcloud;
+		reprojectImageTo3D(disparityMap, pointcloud, Q, false, -1);
+		// Compute a mask to remove background
+		Mat thresholded_disp;
+		threshold(abs(disparityMap), thresholded_disp, 0, 255, THRESH_BINARY);
+		thresholded_disp.convertTo(thresholded_disp, CV_8U);
 
 		// Apply the mask to the point cloud
 		Mat pointcloud_tresh, color_tresh;
@@ -258,7 +259,7 @@ int Decode::executeDecode() {
 						cout << "can not open " << imagesName_file << " or the string list is empty" << endl;
 						return -1;
 					}
-					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T);
+					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, i);
 					break;
 				}
 			}
