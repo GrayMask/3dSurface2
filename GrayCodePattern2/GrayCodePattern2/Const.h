@@ -17,6 +17,7 @@ extern const String imagesName_file;
 extern const String imgType;
 extern const String sfm_dir;
 extern const String sfm_file;
+extern const String ply_file;
 
 extern const bool isThresh;
 extern const size_t white_thresh;
@@ -28,3 +29,5 @@ extern const bool isRemap;
 extern const bool isOptimize;
 extern const float downPortion;
 extern const float upPortion;
+
+extern const bool isShowResult;

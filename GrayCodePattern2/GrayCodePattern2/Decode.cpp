@@ -52,7 +52,7 @@ static void myCalcHist(Mat gray_plane)
 	float max_value = 0;
 	cvGetMinMaxHistValue(gray_hist, 0, &max_value, 0, 0);
 
-	for (int i = 0; i<hist_size; i++)
+	for (int i = 0; i < hist_size; i++)
 	{
 		float bin_val = cvQueryHistValue_1D(gray_hist, i);
 		int intensity = cvRound(bin_val*hist_height / max_value);
@@ -104,7 +104,117 @@ static void getRAndTBetweenTwoCamera(const Mat& R1, const Mat& T1, const Mat& R2
 	T = T2 - R * T1;
 }
 
-static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T, const int count)
+static void transformPointCloud(const Mat& R, const Mat& T, Mat& pointcloud) {
+	Mat R_, T_, RT;
+	R.convertTo(R_, CV_32FC1);
+	T.convertTo(T_, CV_32FC1);
+	transpose(R_, RT);
+	Size sz = pointcloud.size();
+	for (int i = 0; i < sz.height; i++) {
+		for (int j = 0; j < sz.width; j++) {
+			Vec3f x = pointcloud.at<Vec3f>(i, j);
+			Mat ym = RT * (Mat(x) - T_);
+			Vec3f y = (Vec3f) Mat(ym);
+			pointcloud.at<Vec3f>(i, j) = y;
+		}
+	}
+}
+
+static void showPointCloud(InputArray pointcloud, InputArray color) {
+	vector<Mat> pointcloudArr;
+	vector<Mat> colorArr;
+	if (pointcloud.kind() == _InputArray::MAT) {
+		pointcloudArr.resize(0);
+		pointcloudArr.push_back(pointcloud.getMat());
+		colorArr.resize(0);
+		colorArr.push_back(color.getMat());
+	}
+	else {
+		pointcloud.getMatVector(pointcloudArr);
+		color.getMatVector(colorArr);
+	}
+	viz::Viz3d myWindow("Point cloud with color");
+	myWindow.setBackgroundMeshLab();
+	myWindow.showWidget("coosys", viz::WCoordinateSystem());
+	int length = pointcloudArr.size();
+	for (int i = 0; i < length; i++) {
+		stringstream ss;
+		string s;
+		ss << "pointcloud" << i;
+		ss >> s;
+		myWindow.showWidget(s, viz::WCloud(pointcloudArr[i], colorArr[i]));
+	}
+	myWindow.showWidget("text2d", viz::WText("Point cloud", Point(20, 20), 20, viz::Color::green()));
+	myWindow.spin();
+}
+
+struct Point3dRGB {
+	cv::Point3d point;
+	uchar r;
+	uchar g;
+	uchar b;
+};
+
+static void savePointCloud(InputArray pointcloud, InputArray color) {
+	vector<Mat> pointcloudArr;
+	vector<Mat> colorArr;
+	if (pointcloud.kind() == _InputArray::MAT) {
+		pointcloudArr.resize(0);
+		pointcloudArr.push_back(pointcloud.getMat());
+		colorArr.resize(0);
+		colorArr.push_back(color.getMat());
+	}
+	else {
+		pointcloud.getMatVector(pointcloudArr);
+		color.getMatVector(colorArr);
+	}
+	vector<Point3dRGB> pointcloudList;
+	pointcloudList.resize(0);
+	int length = pointcloudArr.size();
+	for (int i = 0; i < length; i++) {
+		Mat pointcloudMat = pointcloudArr[i];
+		Mat colorMat = colorArr[i];
+		Size sz = pointcloudMat.size();
+		for (int x = 0; x < sz.height; x++) {
+			for (int y = 0; y < sz.width; y++) {
+				Vec3f point = pointcloudMat.at<Vec3f>(x, y);
+				if (point[0] != 0 || point[1] != 0 || point[2] != 0) {
+					Point3dRGB point3dRGB;
+					point3dRGB.point.x = point[0]; //double型で単位はm、mmでもいい
+					point3dRGB.point.y = point[1];
+					point3dRGB.point.z = point[2];
+					point3dRGB.r = colorMat.at<Vec3b>(x, y)[2]; //赤：0~255
+					point3dRGB.g = colorMat.at<Vec3b>(x, y)[1]; //緑：0~255
+					point3dRGB.b = colorMat.at<Vec3b>(x, y)[0]; //青：0~255
+					pointcloudList.push_back(point3dRGB);
+				}
+				
+			}
+		}
+	}
+	//ファイルオープン
+	ofstream out(root_dir + ply_file);
+	if (out.is_open())
+	{
+		int pointCount = pointcloudList.size();
+		//ファイルに書き込む
+		//ヘッダの設定
+		out << "ply\nformat ascii 1.0\ncomment Kinect v1 generated\nelement vertex " << pointCount << "\nproperty double x\nproperty double y\nproperty double z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\nend_header\n";
+		//3次元点群
+		std::vector<Point3dRGB>::iterator begin;
+		std::vector<Point3dRGB>::iterator end;
+		begin = pointcloudList.begin();
+		end = pointcloudList.end();
+		for (; begin != end; ++begin) {
+			out << begin->point.x << " " << begin->point.y << " " << begin->point.z
+				<< " " << (int)begin->r << " " << (int)begin->g << " " << (int)begin->b << "\n";
+		}
+		//ファイルクローズ
+		out.close();
+	}
+}
+
+static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T, const int count, Mat& pointcloud_tresh, Mat& color_tresh)
 {
 	size_t numberOfPatternImages = graycode->getNumberOfPatternImages();
 	vector<vector<Mat>> captured_pattern;
@@ -177,15 +287,10 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 		Mat cm_disp, scaledDisparityMap;
 		cout << "disp min " << min << endl << "disp max " << max << endl;
 		convertScaleAbs(disparityMap, scaledDisparityMap, 255 / (max - min), -min * 255 / (max - min));
-		myCalcHist(scaledDisparityMap);
 
 		applyColorMap(scaledDisparityMap, cm_disp, COLORMAP_RAINBOW);
 		// Show the result
 		resize(cm_disp, cm_disp, Size(640, 480));
-		imshow("cm disparity m", cm_disp);
-		imwrite("cv_disparity_m.png", cm_disp);
-		imshow("threshold disp otsu", scaledDisparityMap);
-		imwrite("threshold_disp_otsu.png", scaledDisparityMap);
 		// Compute the point cloud
 		Mat pointcloud;
 		reprojectImageTo3D(disparityMap, pointcloud, Q, false, -1);
@@ -195,7 +300,7 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 		thresholded_disp.convertTo(thresholded_disp, CV_8U);
 
 		// Apply the mask to the point cloud
-		Mat pointcloud_tresh, color_tresh;
+		cout << pointcloud.channels() << endl;
 		pointcloud.copyTo(pointcloud_tresh, thresholded_disp);
 		color.copyTo(color_tresh, thresholded_disp);
 		minMaxIdx(color_tresh, &min, &max);
@@ -203,15 +308,14 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 		minMaxIdx(pointcloud_tresh, &min, &max);
 		cout << "pointcloud_tresh min " << min << endl << "disp max " << max << endl;
 		// Show the point cloud on viz
-		viz::Viz3d myWindow("Point cloud with color");
-		myWindow.setBackgroundMeshLab();
-		myWindow.showWidget("coosys", viz::WCoordinateSystem());
-		myWindow.showWidget("pointcloud", viz::WCloud(pointcloud_tresh, color_tresh));
-		myWindow.showWidget("text2d", viz::WText("Point cloud", Point(20, 20), 20, viz::Color::green()));
-		myWindow.spin();
-
+		if (isShowResult) {
+			myCalcHist(scaledDisparityMap);
+			imshow("cm disparity m", cm_disp);
+			imshow("threshold disp otsu", scaledDisparityMap);
+			showPointCloud(pointcloud_tresh, color_tresh);
+			waitKey();
+		}
 	}
-	waitKey();
 	return 1;
 }
 
@@ -242,6 +346,10 @@ int Decode::executeDecode() {
 	}
 	int groupNum;
 	Tools::readGroupNumFile(groupNum);
+	vector<Mat> pointcloudArr;
+	pointcloudArr.resize(0);
+	vector<Mat> colorArr;
+	colorArr.resize(0);
 	for (int i = 0; i < groupNum - 1; i++) {
 		Mat R, T, R1, T1, R2, T2;
 		if (Tools::getSFMResult(i, R1, T1)) {
@@ -259,10 +367,16 @@ int Decode::executeDecode() {
 						cout << "can not open " << imagesName_file << " or the string list is empty" << endl;
 						return -1;
 					}
-					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, i);
+					Mat pointcloud_tresh, color_tresh;
+					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, i, pointcloud_tresh, color_tresh);
+					transformPointCloud(R1, T1, pointcloud_tresh);
+					pointcloudArr.push_back(pointcloud_tresh);
+					colorArr.push_back(color_tresh);
 					break;
 				}
 			}
 		}
 	}
+	showPointCloud(pointcloudArr, colorArr);
+	savePointCloud(pointcloudArr, colorArr);
 }

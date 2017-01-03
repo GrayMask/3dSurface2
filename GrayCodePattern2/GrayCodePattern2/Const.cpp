@@ -17,6 +17,7 @@ extern const String imagesName_file = "imgName.yaml";
 extern const String imgType = ".jpg";
 extern const String sfm_dir = expr_dir + "sfm_images\\";
 extern const String sfm_file = sfm_dir + "d.nvm.cmvs\\00\\cameras_v2.txt";
+extern const String ply_file = expr_dir + "pointCloud.ply";
 
 extern const bool isThresh = true;
 extern const size_t white_thresh = 0;
@@ -28,3 +29,5 @@ extern const bool isRemap = true;
 extern const bool isOptimize = true;
 extern const float downPortion = 0.03;
 extern const float upPortion = 0.99;
+
+extern const bool isShowResult = false;
