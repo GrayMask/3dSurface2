@@ -1,4 +1,4 @@
-#include <opencv2/imgproc.hpp>
+ï»¿#include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/structured_light.hpp>
 #include <opencv2/core.hpp>
@@ -180,27 +180,22 @@ static void savePointCloud(InputArray pointcloud, InputArray color) {
 				Vec3f point = pointcloudMat.at<Vec3f>(x, y);
 				if (point[0] != 0 || point[1] != 0 || point[2] != 0) {
 					Point3dRGB point3dRGB;
-					point3dRGB.point.x = point[0]; //doubleÐÍ¤Ç…gÎ»¤Ïm¡¢mm¤Ç¤â¤¤¤¤
+					point3dRGB.point.x = point[0];
 					point3dRGB.point.y = point[1];
 					point3dRGB.point.z = point[2];
-					point3dRGB.r = colorMat.at<Vec3b>(x, y)[2]; //³à£º0~255
-					point3dRGB.g = colorMat.at<Vec3b>(x, y)[1]; //¾v£º0~255
-					point3dRGB.b = colorMat.at<Vec3b>(x, y)[0]; //Çà£º0~255
+					point3dRGB.r = colorMat.at<Vec3b>(x, y)[2];
+					point3dRGB.g = colorMat.at<Vec3b>(x, y)[1];
+					point3dRGB.b = colorMat.at<Vec3b>(x, y)[0];
 					pointcloudList.push_back(point3dRGB);
 				}
-				
 			}
 		}
 	}
-	//¥Õ¥¡¥¤¥ë¥ª©`¥×¥ó
 	ofstream out(root_dir + ply_file);
 	if (out.is_open())
 	{
 		int pointCount = pointcloudList.size();
-		//¥Õ¥¡¥¤¥ë¤Ë•ø¤­Þz¤à
-		//¥Ø¥Ã¥À¤ÎÔO¶¨
 		out << "ply\nformat ascii 1.0\ncomment Kinect v1 generated\nelement vertex " << pointCount << "\nproperty double x\nproperty double y\nproperty double z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\nend_header\n";
-		//3´ÎÔªµãÈº
 		std::vector<Point3dRGB>::iterator begin;
 		std::vector<Point3dRGB>::iterator end;
 		begin = pointcloudList.begin();
@@ -209,7 +204,6 @@ static void savePointCloud(InputArray pointcloud, InputArray color) {
 			out << begin->point.x << " " << begin->point.y << " " << begin->point.z
 				<< " " << (int)begin->r << " " << (int)begin->g << " " << (int)begin->b << "\n";
 		}
-		//¥Õ¥¡¥¤¥ë¥¯¥í©`¥º
 		out.close();
 	}
 }
@@ -269,7 +263,6 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 	Mat disparityMap;
 	bool decoded = graycode->decode(captured_pattern, disparityMap, blackImages, whiteImages,
 		structured_light::DECODE_3D_UNDERWORLD);
-	//cout << disparityMap;
 	disparityMap.convertTo(disparityMap, CV_32F);
 	if (isOptimize) {
 		int downThresh = optimizeDisparityMap(disparityMap, disparityMap);
@@ -369,7 +362,7 @@ int Decode::executeDecode() {
 					}
 					Mat pointcloud_tresh, color_tresh;
 					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, i, pointcloud_tresh, color_tresh);
-					transformPointCloud(R1, T1, pointcloud_tresh);
+					transformPointCloud(R2, T2, pointcloud_tresh);
 					pointcloudArr.push_back(pointcloud_tresh);
 					colorArr.push_back(color_tresh);
 					break;
@@ -377,6 +370,6 @@ int Decode::executeDecode() {
 			}
 		}
 	}
-	showPointCloud(pointcloudArr, colorArr);
 	savePointCloud(pointcloudArr, colorArr);
+	showPointCloud(pointcloudArr, colorArr);
 }
