@@ -4,6 +4,9 @@ using namespace cv;
 extern const int proj_width = 1024;
 extern const int proj_height = 768;
 
+extern const int cam_width = 2048;
+extern const int cam_height = 1536;
+
 // dir
 extern const String exprNum = "2";
 extern const String expr_dir = "expr" + exprNum + "\\";

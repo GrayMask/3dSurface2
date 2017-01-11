@@ -4,6 +4,9 @@ using namespace cv;
 extern const int proj_width;
 extern const int proj_height;
 
+extern const int cam_width;
+extern const int cam_height;
+
 // dir
 extern const String exprNum;
 extern const String expr_dir;

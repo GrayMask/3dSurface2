@@ -282,8 +282,6 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 		convertScaleAbs(disparityMap, scaledDisparityMap, 255 / (max - min), -min * 255 / (max - min));
 
 		applyColorMap(scaledDisparityMap, cm_disp, COLORMAP_RAINBOW);
-		// Show the result
-		resize(cm_disp, cm_disp, Size(640, 480));
 		// Compute the point cloud
 		Mat pointcloud;
 		reprojectImageTo3D(disparityMap, pointcloud, Q, false, -1);
@@ -302,6 +300,7 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 		cout << "pointcloud_tresh min " << min << endl << "disp max " << max << endl;
 		// Show the point cloud on viz
 		if (isShowResult) {
+			// Show the result
 			myCalcHist(scaledDisparityMap);
 			imshow("cm disparity m", cm_disp);
 			imshow("threshold disp otsu", scaledDisparityMap);

@@ -47,6 +47,8 @@ void GrayCodePattern::getGrayCodeImages()
 	}
 	// Turning off autofocus
 	cap1.set(CAP_PROP_SETTINGS, 1);
+	cap1.set(CV_CAP_PROP_FRAME_WIDTH, cam_width);
+	cap1.set(CV_CAP_PROP_FRAME_HEIGHT, cam_height);
 	int j = 0;
 	while (true) {
 		int key = waitKey(1);
