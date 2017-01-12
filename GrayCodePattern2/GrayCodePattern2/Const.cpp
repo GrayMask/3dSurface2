@@ -19,7 +19,7 @@ extern const String images_file = "pattern_im";
 extern const String imagesName_file = "imgName.yaml";
 extern const String imgType = ".jpg";
 extern const String sfm_dir = expr_dir + "sfm_images\\";
-extern const String sfm_file = sfm_dir + "d.nvm.cmvs\\00\\cameras_v2.txt";
+extern const String sfm_file = sfm_dir + "d.nvm.cmvs\\01\\cameras_v2.txt";
 extern const String ply_file = expr_dir + "pointCloud.ply";
 
 extern const bool isThresh = true;
