@@ -4,11 +4,11 @@ using namespace cv;
 extern const int proj_width = 1024;
 extern const int proj_height = 768;
 
-extern const int cam_width = 2048;
-extern const int cam_height = 1536;
+extern const int cam_width = 800;
+extern const int cam_height = 600;
 
 // dir
-extern const String exprNum = "2";
+extern const String exprNum = "4";
 extern const String expr_dir = "expr" + exprNum + "\\";
 extern const String calib_file = "calibration_result\\camera.xml";
 extern const String disparityMap_file = "matlab\\disparityMap" + exprNum;
@@ -19,8 +19,8 @@ extern const String images_file = "pattern_im";
 extern const String imagesName_file = "imgName.yaml";
 extern const String imgType = ".jpg";
 extern const String sfm_dir = expr_dir + "sfm_images\\";
-extern const String sfm_file = sfm_dir + "d.nvm.cmvs\\01\\cameras_v2.txt";
-extern const String ply_file = expr_dir + "pointCloud.ply";
+extern const String sfm_file = sfm_dir + "d.nvm.cmvs\\00\\cameras_v2.txt";
+extern const String ply_file = "pointCloud.ply";
 
 extern const bool isThresh = true;
 extern const size_t white_thresh = 0;
@@ -30,7 +30,7 @@ extern const bool isRemap = true;
 
 // Optimize disparity map
 extern const bool isOptimize = true;
-extern const float downPortion = 0.03;
-extern const float upPortion = 0.99;
+extern const float downPortion = 0.05;
+extern const float upPortion = 0.98;
 
 extern const bool isShowResult = false;

@@ -155,7 +155,7 @@ struct Point3dRGB {
 	uchar b;
 };
 
-static void savePointCloud(InputArray pointcloud, InputArray color) {
+static void savePointCloud(InputArray pointcloud, InputArray color, String fileName) {
 	vector<Mat> pointcloudArr;
 	vector<Mat> colorArr;
 	if (pointcloud.kind() == _InputArray::MAT) {
@@ -191,7 +191,7 @@ static void savePointCloud(InputArray pointcloud, InputArray color) {
 			}
 		}
 	}
-	ofstream out(root_dir + ply_file);
+	ofstream out(root_dir + expr_dir + fileName);
 	if (out.is_open())
 	{
 		int pointCount = pointcloudList.size();
@@ -362,6 +362,9 @@ int Decode::executeDecode() {
 					Mat pointcloud_tresh, color_tresh;
 					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, i, pointcloud_tresh, color_tresh);
 					transformPointCloud(R2, T2, pointcloud_tresh);
+					ostringstream countStr;
+					countStr << i;
+					savePointCloud(pointcloud_tresh, color_tresh, countStr.str() + ply_file);
 					pointcloudArr.push_back(pointcloud_tresh);
 					colorArr.push_back(color_tresh);
 					break;
@@ -369,6 +372,6 @@ int Decode::executeDecode() {
 			}
 		}
 	}
-	savePointCloud(pointcloudArr, colorArr);
+	//savePointCloud(pointcloudArr, colorArr, ply_file);
 	showPointCloud(pointcloudArr, colorArr);
 }
