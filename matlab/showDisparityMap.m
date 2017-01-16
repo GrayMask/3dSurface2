@@ -1,9 +1,9 @@
 function showDisparityMap( )
-width  = 640; % Õâ¸öµØ·½ÄãÒªÖ¸¶¨ÎªÄã×Ô¼ºµÄ¾ØÕóµÄ¿úÒÈ
-height = 480; % ÕâÀE²ÒªÖ¸¶¨ÎªÄã×Ô¼ºµÄ¾ØÕóµÄ¸ß¶È
+width  = 800; % Õâ¸öµØ·½ÄãÒªÖ¸¶¨ÎªÄã×Ô¼ºµÄ¾ØÕóµÄ¿úÒÈ
+height = 600; % ÕâÀE²ÒªÖ¸¶¨ÎªÄã×Ô¼ºµÄ¾ØÕóµÄ¸ß¶È
 channels = 1; % Í¨µÀÊ?
 %fs = fopen('disparityMap24.txt', 'rb');
-im=importdata('disparityMap25.txt');
+im=importdata('disparityMap42.txt');
 %db = fread(fs, 'int8'); % ×¢Òâ£¬ÕâÀEÃµÄÊÇunsigned int8
 %fclose(fs);
 %size(db)
@@ -12,7 +12,7 @@ im=importdata('disparityMap25.txt');
 %im(:,:) = ou(3:end, :)'; % BÍ¨µÀ
 min = inf;
 for i=1:height
-    for j=1:640
+    for j=1:width
         value = im(i,j);
         if value~=0 && value<min
             min=value;
@@ -20,7 +20,7 @@ for i=1:height
     end
 end
 for i=1:height
-    for j=1:640
+    for j=1:width
         value = im(i,j);
         if value~=0
             im(i,j) = value - min;
