@@ -21,12 +21,12 @@ static bool readImageList(const int count1, const int count2, vector<string>& l)
 {
 	l.resize(0);
 	char* imagesGroupDirTemp = new char[images_group_dir_length];
-	sprintf(imagesGroupDirTemp, images_group_dir, count2);
+	sprintf(imagesGroupDirTemp, images_group_dir, count1);
 	String filename = root_dir + expr_dir + String(imagesGroupDirTemp) + imagesName_file;
 	if (Tools::readStringList(filename, l) == -1) {
 		return false;
 	}
-	sprintf(imagesGroupDirTemp, images_group_dir, count1);
+	sprintf(imagesGroupDirTemp, images_group_dir, count2);
 	filename = root_dir + expr_dir + String(imagesGroupDirTemp) + imagesName_file;
 	if (Tools::readStringList(filename, l) == -1) {
 		return false;
@@ -109,11 +109,14 @@ static void transformPointCloud(const Mat& R, const Mat& T, Mat& pointcloud) {
 	R.convertTo(R_, CV_32FC1);
 	T.convertTo(T_, CV_32FC1);
 	transpose(R_, RT);
+	//float matrix[3][3] = { {-1, 0, 0},{ 0, -1, 0},{ 0, 0, 1} };
+	//Mat A(Size(3, 3), CV_32FC1, matrix);
 	Size sz = pointcloud.size();
 	for (int i = 0; i < sz.height; i++) {
 		for (int j = 0; j < sz.width; j++) {
 			Vec3f x = pointcloud.at<Vec3f>(i, j);
-			Mat ym = RT * (Mat(x) - T_);
+			//Mat ym = RT * (Mat(x) - T_);
+			Mat ym = RT * Mat(x);
 			Vec3f y = (Vec3f) Mat(ym);
 			pointcloud.at<Vec3f>(i, j) = y;
 		}
@@ -342,13 +345,23 @@ int Decode::executeDecode() {
 	pointcloudArr.resize(0);
 	vector<Mat> colorArr;
 	colorArr.resize(0);
+	vector<Mat> RArr;
+	RArr.resize(0);
+	float matrix[3][3] = { { 1, 0, 0 },{ 0, 1, 0 },{ 0, 0, 1 } };
+	Mat A(Size(3, 3), CV_32FC1, matrix);
+	RArr.push_back(A);
+	vector<Mat> TArr;
+	TArr.resize(0);
+	TArr.push_back(Mat::zeros(3, 1, CV_32FC1));
 	for (int i = 0; i < groupNum - 1; i++) {
+	//for (int i = 0; i < groupNum - 1; i++) {
 		Mat R, T, R1, T1, R2, T2;
 		if (Tools::getSFMResult(i, R1, T1)) {
 			int j;
 			for (j = i + 1; j < groupNum; j++) {
+			//for (j = i + 1; j < groupNum; j++) {
 				if (Tools::getSFMResult(j, R2, T2)) {
-					getRAndTBetweenTwoCamera(R1, T1, R2, T2, R, T);
+					getRAndTBetweenTwoCamera(R2, T2, R1, T1, R, T);
 					cout << "Analyzing " << i << " and " << j << endl;
 					cout << R << endl;
 					cout << T << endl;
@@ -360,16 +373,23 @@ int Decode::executeDecode() {
 						return -1;
 					}
 					Mat pointcloud_tresh, color_tresh;
-					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, i, pointcloud_tresh, color_tresh);
-					transformPointCloud(R2, T2, pointcloud_tresh);
+					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, j, pointcloud_tresh, color_tresh);
+					//int sz = RArr.size();
+					//int k;
+					//for (k = sz - 1; k >= 0; k--) {
+						transformPointCloud(R1, T1, pointcloud_tresh);
+					//}
+					//RArr.push_back(R);
+					//TArr.push_back(T);
 					ostringstream countStr;
-					countStr << i;
+					countStr << j;
 					savePointCloud(pointcloud_tresh, color_tresh, countStr.str() + ply_file);
 					pointcloudArr.push_back(pointcloud_tresh);
 					colorArr.push_back(color_tresh);
 					break;
 				}
 			}
+			//break;
 		}
 	}
 	//savePointCloud(pointcloudArr, colorArr, ply_file);
