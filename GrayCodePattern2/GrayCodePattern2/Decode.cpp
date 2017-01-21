@@ -115,8 +115,8 @@ static void transformPointCloud(const Mat& R, const Mat& T, Mat& pointcloud) {
 	for (int i = 0; i < sz.height; i++) {
 		for (int j = 0; j < sz.width; j++) {
 			Vec3f x = pointcloud.at<Vec3f>(i, j);
-			//Mat ym = RT * (Mat(x) - T_);
-			Mat ym = RT * Mat(x);
+			Mat ym = RT * (Mat(x));
+			//Mat ym = R_ * Mat(x) + T_;
 			Vec3f y = (Vec3f) Mat(ym);
 			pointcloud.at<Vec3f>(i, j) = y;
 		}
@@ -288,6 +288,7 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 		// Compute the point cloud
 		Mat pointcloud;
 		reprojectImageTo3D(disparityMap, pointcloud, Q, false, -1);
+		cout << Q << endl;
 		// Compute a mask to remove background
 		Mat thresholded_disp;
 		threshold(abs(disparityMap), thresholded_disp, 0, 255, THRESH_BINARY);
@@ -347,12 +348,12 @@ int Decode::executeDecode() {
 	colorArr.resize(0);
 	vector<Mat> RArr;
 	RArr.resize(0);
-	float matrix[3][3] = { { 1, 0, 0 },{ 0, 1, 0 },{ 0, 0, 1 } };
-	Mat A(Size(3, 3), CV_32FC1, matrix);
-	RArr.push_back(A);
+	//float matrix[3][3] = { { 1, 0, 0 },{ 0, 1, 0 },{ 0, 0, 1 } };
+	//Mat A(Size(3, 3), CV_32FC1, matrix);
+	//RArr.push_back(A);
 	vector<Mat> TArr;
 	TArr.resize(0);
-	TArr.push_back(Mat::zeros(3, 1, CV_32FC1));
+	//TArr.push_back(Mat::zeros(3, 1, CV_32FC1));
 	for (int i = 0; i < groupNum - 1; i++) {
 	//for (int i = 0; i < groupNum - 1; i++) {
 		Mat R, T, R1, T1, R2, T2;
@@ -380,7 +381,7 @@ int Decode::executeDecode() {
 						transformPointCloud(R1, T1, pointcloud_tresh);
 					//}
 					//RArr.push_back(R);
-					//TArr.push_back(T);
+					//push_back(T);
 					ostringstream countStr;
 					countStr << j;
 					savePointCloud(pointcloud_tresh, color_tresh, countStr.str() + ply_file);
