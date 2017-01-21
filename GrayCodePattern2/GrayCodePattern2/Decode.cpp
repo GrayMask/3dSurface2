@@ -104,18 +104,20 @@ static void getRAndTBetweenTwoCamera(const Mat& R1, const Mat& T1, const Mat& R2
 	T = T2 - R * T1;
 }
 
-static void transformPointCloud(const Mat& R, const Mat& T, Mat& pointcloud) {
-	Mat R_, T_, RT;
+static void transformPointCloud(const Mat& R, const Mat& T, const Mat& Rn, Mat& pointcloud) {
+	Mat R_, T_, Rn_, RT, RnT;
 	R.convertTo(R_, CV_32FC1);
 	T.convertTo(T_, CV_32FC1);
+	Rn.convertTo(Rn_, CV_32FC1);
 	transpose(R_, RT);
+	transpose(Rn_, RnT);
 	//float matrix[3][3] = { {-1, 0, 0},{ 0, -1, 0},{ 0, 0, 1} };
 	//Mat A(Size(3, 3), CV_32FC1, matrix);
 	Size sz = pointcloud.size();
 	for (int i = 0; i < sz.height; i++) {
 		for (int j = 0; j < sz.width; j++) {
 			Vec3f x = pointcloud.at<Vec3f>(i, j);
-			Mat ym = RT * (Mat(x));
+			Mat ym = RT * (RnT * Mat(x) - T_);
 			//Mat ym = R_ * Mat(x) + T_;
 			Vec3f y = (Vec3f) Mat(ym);
 			pointcloud.at<Vec3f>(i, j) = y;
@@ -211,7 +213,7 @@ static void savePointCloud(InputArray pointcloud, InputArray color, String fileN
 	}
 }
 
-static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T, const int count, Mat& pointcloud_tresh, Mat& color_tresh)
+static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T, const int count, Mat& pointcloud_tresh, Mat& color_tresh, Mat &Rn)
 {
 	size_t numberOfPatternImages = graycode->getNumberOfPatternImages();
 	vector<vector<Mat>> captured_pattern;
@@ -222,13 +224,17 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 	Size imagesSize = color.size();
 	// Stereo rectify
 	cout << "Rectifying images..." << endl;
-	Mat R1, R2, P1, P2, Q;
+	Mat R2, P1, P2, Q;
 	Rect validRoi[2];
 
-	stereoRectify(intrinsics, distCoeffs, intrinsics, distCoeffs, imagesSize, R, T, R1, R2, P1, P2, Q, 0,
+	stereoRectify(intrinsics, distCoeffs, intrinsics, distCoeffs, imagesSize, R, T, Rn, R2, P1, P2, Q, 0,
 		-1, imagesSize, &validRoi[0], &validRoi[1]);
+	cout << Rn << endl;
+	cout << R2 << endl;
+	cout << P1 << endl;
+	cout << P2 << endl;
 	Mat map1x, map1y, map2x, map2y;
-	initUndistortRectifyMap(intrinsics, distCoeffs, R1, P1, imagesSize, CV_32FC1, map1x, map1y);
+	initUndistortRectifyMap(intrinsics, distCoeffs, Rn, P1, imagesSize, CV_32FC1, map1x, map1y);
 	initUndistortRectifyMap(intrinsics, distCoeffs, R2, P2, imagesSize, CV_32FC1, map2x, map2y);
 	// Loading pattern images
 	for (size_t i = 0; i < numberOfPatternImages; i++)
@@ -288,7 +294,6 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 		// Compute the point cloud
 		Mat pointcloud;
 		reprojectImageTo3D(disparityMap, pointcloud, Q, false, -1);
-		cout << Q << endl;
 		// Compute a mask to remove background
 		Mat thresholded_disp;
 		threshold(abs(disparityMap), thresholded_disp, 0, 255, THRESH_BINARY);
@@ -373,12 +378,12 @@ int Decode::executeDecode() {
 						cout << "can not open " << imagesName_file << " or the string list is empty" << endl;
 						return -1;
 					}
-					Mat pointcloud_tresh, color_tresh;
-					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, j, pointcloud_tresh, color_tresh);
+					Mat pointcloud_tresh, color_tresh, Rn;
+					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, j, pointcloud_tresh, color_tresh ,Rn);
 					//int sz = RArr.size();
 					//int k;
 					//for (k = sz - 1; k >= 0; k--) {
-						transformPointCloud(R1, T1, pointcloud_tresh);
+						transformPointCloud(R1, T1, Rn, pointcloud_tresh);
 					//}
 					//RArr.push_back(R);
 					//push_back(T);
