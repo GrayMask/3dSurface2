@@ -229,10 +229,6 @@ static int decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& gra
 
 	stereoRectify(intrinsics, distCoeffs, intrinsics, distCoeffs, imagesSize, R, T, Rn, R2, P1, P2, Q, 0,
 		-1, imagesSize, &validRoi[0], &validRoi[1]);
-	cout << Rn << endl;
-	cout << R2 << endl;
-	cout << P1 << endl;
-	cout << P2 << endl;
 	Mat map1x, map1y, map2x, map2y;
 	initUndistortRectifyMap(intrinsics, distCoeffs, Rn, P1, imagesSize, CV_32FC1, map1x, map1y);
 	initUndistortRectifyMap(intrinsics, distCoeffs, R2, P2, imagesSize, CV_32FC1, map2x, map2y);
@@ -379,7 +375,7 @@ int Decode::executeDecode() {
 						return -1;
 					}
 					Mat pointcloud_tresh, color_tresh, Rn;
-					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, j, pointcloud_tresh, color_tresh ,Rn);
+					decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, i, pointcloud_tresh, color_tresh ,Rn);
 					//int sz = RArr.size();
 					//int k;
 					//for (k = sz - 1; k >= 0; k--) {
@@ -388,7 +384,7 @@ int Decode::executeDecode() {
 					//RArr.push_back(R);
 					//push_back(T);
 					ostringstream countStr;
-					countStr << j;
+					countStr << i;
 					savePointCloud(pointcloud_tresh, color_tresh, countStr.str() + ply_file);
 					pointcloudArr.push_back(pointcloud_tresh);
 					colorArr.push_back(color_tresh);
