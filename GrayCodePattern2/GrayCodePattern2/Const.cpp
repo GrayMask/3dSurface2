@@ -8,7 +8,7 @@ extern const int cam_width = 800;
 extern const int cam_height = 600;
 
 // dir
-extern const String exprNum = "4";
+extern const String exprNum = "7";
 extern const String expr_dir = "expr" + exprNum + "\\";
 extern const String calib_file = "calibration_result\\camera2.xml";
 extern const String disparityMap_file = "matlab\\disparityMap" + exprNum;
