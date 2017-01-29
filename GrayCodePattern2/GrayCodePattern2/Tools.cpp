@@ -1,3 +1,5 @@
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #include <fstream>
 #include <iostream>
 #include <opencv2/core.hpp>;
@@ -7,6 +9,10 @@
 
 using namespace cv;
 using namespace std;
+
+
+#define cvQueryHistValue_1D( hist, idx0 ) \
+    ((float)cvGetReal1D( (hist)->bins, (idx0)))
 
 int Tools::copyFile(const String fromFile, const String toFile) {
 	fstream in(fromFile, ios::in | ios::binary);
@@ -153,4 +159,36 @@ int Tools::getSFMResult(const int count, Mat& R, Mat& T) {
 		} while (goWithLine(in, 13));
 	}
 	return 0;
+}
+
+void Tools::myCalcHist(Mat gray_plane)
+{
+	IplImage *src;
+	src = &IplImage(gray_plane);
+	int hist_size = 256;
+	int hist_height = 256;
+	float range[] = { 0,255 };
+	float* ranges[] = { range };
+	CvHistogram* gray_hist = cvCreateHist(1, &hist_size, CV_HIST_ARRAY, ranges, 1);
+	cvCalcHist(&src, gray_hist, 0, 0);
+	cvNormalizeHist(gray_hist, 1.0);
+
+	int scale = 2;
+	IplImage* hist_image = cvCreateImage(cvSize(hist_size*scale, hist_height), 8, 3);
+	cvZero(hist_image);
+	float max_value = 0;
+	cvGetMinMaxHistValue(gray_hist, 0, &max_value, 0, 0);
+
+	for (int i = 0; i < hist_size; i++)
+	{
+		float bin_val = cvQueryHistValue_1D(gray_hist, i);
+		int intensity = cvRound(bin_val*hist_height / max_value);
+		cvRectangle(hist_image,
+			cvPoint(i*scale, hist_height - 1),
+			cvPoint((i + 1)*scale - 1, hist_height - intensity),
+			CV_RGB(255, 255, 255));
+	}
+	cvGetMinMaxHistValue(gray_hist, 0, &max_value, 0, 0);
+	cvNamedWindow("H-S Histogram", 1);
+	cvShowImage("H-S Histogram", hist_image);
 }

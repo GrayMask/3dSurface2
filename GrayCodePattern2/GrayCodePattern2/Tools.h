@@ -17,5 +17,7 @@ public:
 	static int readStringList(String& filename, vector<string>& l);
 
 	static int getSFMResult(const int count, Mat& R, Mat& T);
+
+	static void myCalcHist(Mat gray_plane);
 };
 #endif

@@ -30,7 +30,9 @@ extern const bool isRemap = true;
 
 // Optimize disparity map
 extern const bool isOptimize = true;
-extern const float downPortion = 0.05;
+extern const float downPortion = 0.02;
 extern const float upPortion = 0.95;
 
 extern const bool isShowResult = false;
+
+extern const bool isUnderWorld = true;

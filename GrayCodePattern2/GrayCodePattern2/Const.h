@@ -34,3 +34,5 @@ extern const float downPortion;
 extern const float upPortion;
 
 extern const bool isShowResult;
+
+extern const bool isUnderWorld;
