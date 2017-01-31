@@ -1,0 +1,8 @@
+﻿  Scanner.cpp
+d:\program\opencv2.4\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+d:\program\opencv2.4\opencv\build\include\opencv2\legacy\compat.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (932). Save the file in Unicode format to prevent data loss
+d:\document\project\3dsurface2\sls2012v3.2\sls2012v3.2\scanner.h(26): warning C4005: 'STRICT': macro redefinition
+  c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(23): note: see previous definition of 'STRICT'
+  SLS2012v3.2.vcxproj -> D:\document\project\3dSurface2\SLS2012v3.2\x64\Debug\SLS2012v3.2.exe
+  SLS2012v3.2.vcxproj -> D:\document\project\3dSurface2\SLS2012v3.2\x64\Debug\SLS2012v3.2.pdb (Full PDB)

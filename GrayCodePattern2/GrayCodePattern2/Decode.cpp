@@ -176,16 +176,17 @@ int Decode::executeDecode() {
 						OpencvRcns::decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, i, pointcloud_tresh, color_tresh);
 					}
 					transformPointCloud(R1, T1, pointcloud_tresh);
-					ostringstream countStr;
-					//countStr << i;
-					countStr << j;
-					savePointCloud(pointcloud_tresh, color_tresh, countStr.str() + ply_file);
+					ostringstream countStrI;
+					ostringstream countStrJ;
+					countStrI << i;
+					countStrJ << j;
+					savePointCloud(pointcloud_tresh, color_tresh, countStrI.str() + countStrJ.str() + ply_file);
 					pointcloudArr.push_back(pointcloud_tresh);
 					colorArr.push_back(color_tresh);
-					break;
+					//break;
 				}
 			}
-			//break;
+			break;
 		}
 	}
 	//savePointCloud(pointcloudArr, colorArr, ply_file);

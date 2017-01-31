@@ -3,7 +3,7 @@ width  = 800; % Õâ¸öµØ·½ÄãÒªÖ¸¶¨ÎªÄã×Ô¼ºµÄ¾ØÕóµÄ¿úÒÈ
 height = 600; % ÕâÀE²ÒªÖ¸¶¨ÎªÄã×Ô¼ºµÄ¾ØÕóµÄ¸ß¶È
 channels = 1; % Í¨µÀÊ?
 %fs = fopen('disparityMap24.txt', 'rb');
-im=importdata('disparityMap42.txt');
+im=importdata('disparityMap70.txt');
 %db = fread(fs, 'int8'); % ×¢Òâ£¬ÕâÀEÃµÄÊÇunsigned int8
 %fclose(fs);
 %size(db)

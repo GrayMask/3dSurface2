@@ -4,13 +4,13 @@ using namespace cv;
 extern const int proj_width = 1024;
 extern const int proj_height = 768;
 
-extern const int cam_width = 800;
-extern const int cam_height = 600;
+extern const int cam_width = 4896;
+extern const int cam_height = 3264;
 
 // dir
-extern const String exprNum = "7";
+extern const String exprNum = "8";
 extern const String expr_dir = "expr" + exprNum + "\\";
-extern const String calib_file = "calibration_result\\camera2.xml";
+extern const String calib_file = "calibration_result\\camera3.xml";
 extern const String disparityMap_file = "matlab\\disparityMap" + exprNum;
 extern const String groupNum_file = expr_dir + "groupNum.txt";
 extern const char* images_group_dir = "partten_images%02d\\";
@@ -35,4 +35,4 @@ extern const float upPortion = 0.95;
 
 extern const bool isShowResult = false;
 
-extern const bool isUnderWorld = true;
+extern const bool isUnderWorld = false;

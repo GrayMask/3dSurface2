@@ -14,7 +14,7 @@ class VirtualCamera
 public:
 
 	VirtualCamera(void);
-	VirtualCamera(Mat distortion_, Mat rotationMatrix_, Mat translationVector_, Mat cameraMatrix_);
+	VirtualCamera(Mat cameraMatrix_, Mat distortion_, Mat rotationMatrix_, Mat translationVector_);
 	~VirtualCamera(void);
 
 
