@@ -81,6 +81,8 @@ class Reconstructor
 
 		void Reconstructor::triangulation(cv::vector<cv::Point> *cam1Pixels, VirtualCamera cameras1, cv::vector<cv::Point> *cam2Pixels, VirtualCamera cameras2, int cam1index, int cam2index);
 		
+		void Reconstructor::savePointCloud(cv::vector<cv::Point3f>& pointcloud_tresh, cv::vector<cv::Vec3f>& color_tresh, std::string fileName);
+
 		std::string *camFolder;
 		std::string *imgPrefix;
 		std::string *imgSuffix;

@@ -183,10 +183,10 @@ int Decode::executeDecode() {
 					savePointCloud(pointcloud_tresh, color_tresh, countStrI.str() + countStrJ.str() + ply_file);
 					pointcloudArr.push_back(pointcloud_tresh);
 					colorArr.push_back(color_tresh);
-					//break;
+					break;
 				}
 			}
-			break;
+			//break;
 		}
 	}
 	//savePointCloud(pointcloudArr, colorArr, ply_file);

@@ -432,7 +432,7 @@ bool Reconstructor::getProjPixel(int x, int y, cv::Point &p_out)
 
 	if((yDec > proj_h || xDec > proj_w))
 	{
-		error == true;	
+		error = true;	
 	}
 
 	p_out.x = xDec;
@@ -451,9 +451,30 @@ void Reconstructor::setImgPath(const char folder[],const char prefix[],const cha
 	pathSet[cam_no] = true;
 }
 
+void Reconstructor::savePointCloud(cv::vector<cv::Point3f>& pointcloud_tresh, cv::vector<cv::Vec3f>& color_tresh, std::string fileName) {
+
+	ofstream out(fileName);
+	if (out.is_open())
+	{
+		int pointCount = pointcloud_tresh.size();
+		out << "ply\nformat ascii 1.0\ncomment Kinect v1 generated\nelement vertex " << pointCount << "\nproperty double x\nproperty double y\nproperty double z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\nend_header\n";
+		for (int i = 0; i<pointCount; i++) {
+			cv::Point3f point = pointcloud_tresh[i];
+			cv::Vec3f color = color_tresh[i];
+			out << point.x << " " << point.y << " " << point.z
+				<< " " << (int)color[2] << " " << (int)color[1] << " " << (int)color[0] << "\n";
+		}
+		out.close();
+	}
+}
+
 
 void Reconstructor::triangulation(cv::vector<cv::Point> *cam1Pixels, VirtualCamera camera1, cv::vector<cv::Point> *cam2Pixels, VirtualCamera camera2, int cam1index, int cam2index)
 {
+	cv::vector<cv::Point3f> pointcloud_tresh;
+	pointcloud_tresh.resize(0);
+	cv::vector<cv::Vec3f> color_tresh;
+	color_tresh.resize(0);
 	int w = proj_w;
 	int h = proj_h;
 	//start reconstraction
@@ -518,9 +539,10 @@ void Reconstructor::triangulation(cv::vector<cv::Point> *cam1Pixels, VirtualCame
 					
 					//get pixel color for the second camera view
 					color2 = Utilities::matGet3D( colorImgs[cam2index], cam2Pixs[c2].x, cam2Pixs[c2].y);
-
-					points3DProjView->addPoint(i,j,interPoint, (color1 + color2)/2);	
-
+					cv::Vec3f cl = (color1 + color2) / 2;
+					points3DProjView->addPoint(i,j,interPoint, cl);
+					pointcloud_tresh.push_back(interPoint);
+					color_tresh.push_back(cl);
 				}
 
 			}
@@ -528,7 +550,7 @@ void Reconstructor::triangulation(cv::vector<cv::Point> *cam1Pixels, VirtualCame
 		}
 	}
 	
-
+	savePointCloud(pointcloud_tresh, color_tresh, "output/pointcloud.ply");
 	system("cls");
 	std::cout<<"Computing 3D Cloud  100%\n";
 

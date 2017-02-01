@@ -445,7 +445,7 @@ bool Utilities::line_lineIntersection(cv::Point3f p1, cv::Vec3f v1, cv::Point3f 
 	
 	denom = v1_dot_v1 * v2_dot_v2 - v1_dot_v2 * v1_dot_v2;
 
-	if(abs(denom)<0.1)
+	if(abs(denom)<0.001)
 		return false;
 
 	s =  (v1_dot_v2/denom) * v12_dot_v2 - (v2_dot_v2/denom) * v12_dot_v1;

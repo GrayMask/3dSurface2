@@ -13,7 +13,7 @@
   <blackThreshold>40</blackThreshold>
   <whiteThreshold>5</whiteThreshold></Reconstruction>
 <Export><Obj>0</Obj>
-  <Ply>0</Ply>
+  <Ply>1</Ply>
   <GridPly>1</GridPly>
-  <ShadowMask>0</ShadowMask></Export>
+  <ShadowMask>1</ShadowMask></Export>
 </opencv_storage>
