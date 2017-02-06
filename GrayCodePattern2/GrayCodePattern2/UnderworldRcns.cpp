@@ -231,7 +231,7 @@ void decodePaterns(const vector<Mat>& whiteImages, const vector<Mat>& blackImage
 						shadowMask.at<uchar>(i, j) = 0;
 						continue;
 					}
-					camsPixels[c][ac(projPixel.x, projPixel.y)].push_back(Point(i, j));
+					camsPixels[c][ac(projPixel.x, projPixel.y)].push_back(Point(j, i));
 				}
 			}
 		}
@@ -382,7 +382,7 @@ bool line_lineIntersection(cv::Point3f p1, cv::Vec3f v1, cv::Point3f p2, cv::Vec
 
 	denom = v1_dot_v1 * v2_dot_v2 - v1_dot_v2 * v1_dot_v2;
 
-	if (abs(denom)<0.03)
+	if (abs(denom)<0.001)
 		return false;
 
 	s = (v1_dot_v2 / denom) * v12_dot_v2 - (v2_dot_v2 / denom) * v12_dot_v1;
@@ -406,7 +406,7 @@ static void savePointCloud(vector<Point3f>& pointcloud_tresh, vector<Vec3f>& col
 			Point3f point = pointcloud_tresh[i];
 			Vec3f color = color_tresh[i];
 			out << point.x << " " << point.y << " " << point.z
-				<< " " << (int)color[0] << " " << (int)color[1] << " " << (int)color[2] << "\n";
+				<< " " << (int)color[2] << " " << (int)color[1] << " " << (int)color[0] << "\n";
 		}
 		out.close();
 	}
@@ -457,7 +457,7 @@ void triangulation(vector<Mat> colorImgs, vector<vector<Point>>& cam1Pixels, Vir
 				normalize(ray1Vector);
 
 				//get pixel color for the first camera view
-				color1 = matGet3D(colorImgs[cam1index], cam1Pixs[c1].x, cam1Pixs[c1].y);
+				color1 = matGet3D(colorImgs[cam1index], cam1Pixs[c1].y, cam1Pixs[c1].x);
 
 				for (int c2 = 0; c2 < cam2Pixs.size(); c2++)
 				{
@@ -479,7 +479,7 @@ void triangulation(vector<Mat> colorImgs, vector<vector<Point>>& cam1Pixels, Vir
 						continue;
 
 					//get pixel color for the second camera view
-					color2 = matGet3D(colorImgs[cam2index], cam2Pixs[c2].x, cam2Pixs[c2].y);
+					color2 = matGet3D(colorImgs[cam2index], cam2Pixs[c2].y, cam2Pixs[c2].x);
 					pointcloud_tresh.push_back(interPoint);
 					color_tresh.push_back((color1 + color2) / 2);
 				}

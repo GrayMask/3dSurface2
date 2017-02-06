@@ -26,7 +26,7 @@ Reconstructor::Reconstructor(int numOfCams_)
 
 	autoContrast_ = false;
 	saveAutoContrast_ = false;
-	saveShadowMask_ = false;
+	saveShadowMask_ = true;
 	
 
 	cameras = new  VirtualCamera[numOfCams];

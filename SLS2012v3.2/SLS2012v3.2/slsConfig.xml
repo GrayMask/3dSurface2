@@ -3,15 +3,15 @@
 <Projector><Width>1024</Width>
   <Height>768</Height></Projector>
 <Camera><ID>0</ID>
-  <Width>800</Width>
-  <Height>600</Height></Camera>
+  <Width>640</Width>
+  <Height>480</Height></Camera>
 <ProjectorWindow><Position><x>300</x>
     <y>-20</y></Position></ProjectorWindow>
 <Reconstruction><AutoContrast>0</AutoContrast>
   <SaveAutoContrastImages>0</SaveAutoContrastImages>
   <RaySampling>1</RaySampling>
   <blackThreshold>40</blackThreshold>
-  <whiteThreshold>5</whiteThreshold></Reconstruction>
+  <whiteThreshold>1</whiteThreshold></Reconstruction>
 <Export><Obj>0</Obj>
   <Ply>1</Ply>
   <GridPly>1</GridPly>

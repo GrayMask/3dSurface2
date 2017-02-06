@@ -145,6 +145,7 @@ void OpencvRcns::decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern
 			// Apply the mask to the point cloud
 			pointcloud.copyTo(pointcloud_tresh, thresholded_disp);
 			modifyCameraCoord(R1, pointcloud_tresh);
+			cout << R1 << endl;
 			color.copyTo(color_tresh, thresholded_disp);
 			minMaxIdx(color_tresh, &min, &max);
 			cout << "color_tresh min " << min << endl << "disp max " << max << endl;

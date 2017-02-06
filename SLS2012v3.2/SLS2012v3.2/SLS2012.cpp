@@ -313,7 +313,7 @@ void reconstruct()
 		std::string p ="dataset\\Cam";
 		p += '0'+ (i+1);
 		p += '\\';
-		reconstructor->setImgPath(p.c_str(),"",".jpg",i);
+		reconstructor->setImgPath(p.c_str(),"", extentsion.c_str(),i);
 	}
 
 	//load projector and camera paramiters

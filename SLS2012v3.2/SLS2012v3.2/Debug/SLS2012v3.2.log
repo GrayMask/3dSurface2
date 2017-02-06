@@ -1,10 +1,21 @@
-﻿  Utilities.cpp
+﻿  Reconstructor.cpp
 d:\program\opencv2.4\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
 d:\program\opencv2.4\opencv\build\include\opencv2\legacy\compat.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (932). Save the file in Unicode format to prevent data loss
-d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\utilities.cpp(117): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\utilities.cpp(183): warning C4715: 'Utilities::matGet2D': not all control paths return a value
-d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\utilities.cpp(221): warning C4715: 'Utilities::matGet3D': not all control paths return a value
-d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\utilities.cpp(259): warning C4715: 'Utilities::matGet3D': not all control paths return a value
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\rng.h(83): warning C4244: '=': conversion from 'unsigned __int64' to 'int', possible loss of data
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\rng.h(166): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\rng.h(173): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\rng.h(177): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\rng.h(181): warning C4244: '=': conversion from 'unsigned __int64' to 'int', possible loss of data
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\rng.h(189): warning C4244: '=': conversion from 'unsigned __int64' to 'int', possible loss of data
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\rng.h(196): warning C4244: '=': conversion from 'unsigned __int64' to 'int', possible loss of data
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\rng.h(204): warning C4244: '=': conversion from 'unsigned __int64' to 'int', possible loss of data
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\rng.h(257): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\reconstructor.cpp(203): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\conio.h(452): note: see declaration of 'getch'
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\reconstructor.cpp(508): warning C4018: '<': signed/unsigned mismatch
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\reconstructor.cpp(511): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\reconstructor.cpp(521): warning C4018: '<': signed/unsigned mismatch
+d:\document\project\3dsurface2\code\sls2012v3.2\sls2012v3.2\reconstructor.cpp(524): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   SLS2012v3.2.vcxproj -> D:\document\project\3dSurface2\code\SLS2012v3.2\Debug\SLS2012v3.2.exe
   SLS2012v3.2.vcxproj -> D:\document\project\3dSurface2\code\SLS2012v3.2\Debug\SLS2012v3.2.pdb (Full PDB)
