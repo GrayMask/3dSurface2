@@ -49,6 +49,12 @@ void GrayCodePattern::getGrayCodeImages()
 	cap1.set(CAP_PROP_SETTINGS, 1);
 	cap1.set(CV_CAP_PROP_FRAME_WIDTH, cam_width);
 	cap1.set(CV_CAP_PROP_FRAME_HEIGHT, cam_height);
+	VideoCapture cap2(1);
+	if (isStereoCamera) {
+		cap2.set(CAP_PROP_SETTINGS, 1);
+		cap2.set(CV_CAP_PROP_FRAME_WIDTH, cam_width);
+		cap2.set(CV_CAP_PROP_FRAME_HEIGHT, cam_height);
+	}
 	int j = 0;
 	while (true) {
 		int key = waitKey(1);
@@ -58,48 +64,82 @@ void GrayCodePattern::getGrayCodeImages()
 		else if (key == 13) {
 			char* imagesGroupDirTemp = new char[images_group_dir_length];
 			sprintf(imagesGroupDirTemp, images_group_dir, j);
-			String imagesDir = root_dir + expr_dir + String(imagesGroupDirTemp);
-			if (_access(imagesDir.c_str(), 6) == -1)
+			String imagesDir1 = root_dir + expr_dir + String(imagesGroupDirTemp);
+			if (_access(imagesDir1.c_str(), 6) == -1)
 			{
-				int result = _mkdir(imagesDir.c_str());
+				int result = _mkdir(imagesDir1.c_str());
 			}
-			FileStorage fs(imagesDir + imagesName_file, FileStorage::WRITE);
-			fs << "imagelist" << "[";
+			FileStorage fs1(imagesDir1 + imagesName_file, FileStorage::WRITE);
+			fs1 << "imagelist" << "[";
+			String imagesDir2;
+			FileStorage fs2;
+			if (isStereoCamera) {
+				j++;
+				sprintf(imagesGroupDirTemp, images_group_dir, j);
+				imagesDir2 = root_dir + expr_dir + String(imagesGroupDirTemp);
+				if (_access(imagesDir2.c_str(), 6) == -1)
+				{
+					int result = _mkdir(imagesDir2.c_str());
+				}
+				fs2.open(imagesDir2 + imagesName_file, FileStorage::WRITE);
+				fs2 << "imagelist" << "[";
+			}
 			int i = 0;
 			while (i < (int)pattern.size())
 			{
 				cout << "Waiting to save image number " << i + 1 << endl << "Press any key to acquire the photo" << endl;
 				imshow("Pattern Window", pattern[i]);
-				Mat frame1;
+				Mat frame1, frame2;
 				while (1)
 				{
 					cap1 >> frame1;  // get a new frame from camera 1
-					imshow("cam1", frame1);
+					if (isStereoCamera) {
+						cap2 >> frame2;
+					}
+					//imshow("cam1", frame1);
 					int key = waitKey(1);
 					if (key == 115)
 					{
-						bool save1 = false;
+						bool save1, save2 = false;
 						ostringstream name;
 						name << i + 1;
-						String imagesFile = imagesDir + images_file + name.str() + imgType;
-						cout << imagesFile<<endl;
-						save1 = imwrite(imagesFile, frame1);
-						if (save1)
-						{
-							cout << "pattern cam1 images number " << i + 1 << " saved" << endl << endl;
-							fs << imagesFile;
-							i++;
-							break;
+						String imagesFile1 = imagesDir1 + images_file + name.str() + imgType;
+						String imagesFile2;
+						cout << imagesFile1 << endl;
+						save1 = imwrite(imagesFile1, frame1);
+						if (isStereoCamera) {
+							imagesFile2 = imagesDir2 + images_file + name.str() + imgType;
+							cout << imagesFile2 << endl;
+							save2 = imwrite(imagesFile2, frame2);
 						}
-						else
-						{
+						if (!isStereoCamera) {
+							if (save1) {
+								cout << "pattern cam1 images number " << i + 1 << " saved" << endl << endl;
+								fs1 << imagesFile1;
+								i++;
+								break;
+							}
 							cout << "pattern cam1 images number " << i + 1 << " NOT saved" << endl << endl << "Retry, check the path" << endl << endl;
+						}
+						else {
+							if (save1 && save2) {
+								cout << "pattern cam1 images number " << i + 1 << " saved" << endl << endl;
+								fs1 << imagesFile1;
+								cout << "pattern cam2 images number " << i + 1 << " saved" << endl << endl;
+								fs2 << imagesFile2;
+								i++;
+								break;
+							}
+							cout << "pattern cam1 or cam2 images number " << i + 1 << " NOT saved" << endl << endl << "Retry, check the path" << endl << endl;
 						}
 					}
 				}
 			}
-			fs << "]";
-			destroyWindow("cam1");
+			fs1 << "]"; 
+			if (isStereoCamera) {
+				fs2 << "]";
+			}
+			//destroyWindow("cam1");
 			j++;
 		}
 	}

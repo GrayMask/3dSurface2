@@ -25,7 +25,6 @@ VirtualCamera::VirtualCamera(Mat cameraMatrix_, Mat distortion_, Mat rotationMat
 	fc.y = cameraMatrix.at<float>(1, 1);
 }
 
-
 VirtualCamera::~VirtualCamera(void)
 {
 

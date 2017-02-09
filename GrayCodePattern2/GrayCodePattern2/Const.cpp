@@ -4,13 +4,15 @@ using namespace cv;
 extern const int proj_width = 1024;
 extern const int proj_height = 768;
 
-extern const int cam_width = 640;//800;//4896;
-extern const int cam_height = 480;//600;//3264;
+extern const int cam_width = 1280;//800;//4896;
+extern const int cam_height = 720;//600;//3264;
+
+extern const bool isStereoCamera = true;
 
 // dir
-extern const String exprNum = "8";
+extern const String exprNum = "10";
 extern const String expr_dir = "expr" + exprNum + "\\";
-extern const String calib_file = "calibration_result\\camera3.xml";
+extern const String calib_file = "calibration_result\\camera4.xml";
 extern const String disparityMap_file = "matlab\\disparityMap" + exprNum;
 extern const String groupNum_file = expr_dir + "groupNum.txt";
 extern const char* images_group_dir = "partten_images%02d\\";

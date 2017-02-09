@@ -31,13 +31,6 @@ static bool readImageList(const int count1, const int count2, vector<string>& l)
 	return true;
 }
 
-static void getRAndTBetweenTwoCamera(const Mat& R1, const Mat& T1, const Mat& R2, const Mat& T2, Mat& R, Mat& T) {
-	Mat R1T;
-	transpose(R1, R1T);
-	R = R2 * R1T;
-	T = T2 - R * T1;
-}
-
 static void transformPointCloud(const Mat& R, const Mat& T, Mat& pointcloud) {
 	Mat R_, T_, RT;
 	R.convertTo(R_, CV_32FC1);
@@ -133,13 +126,19 @@ int Decode::executeDecode() {
 		return -1;
 	}
 	// Loading calibration parameters
-	Mat intrinsics, distCoeffs;
+	Mat intrinsics, distCoeffs, intrinsics2, distCoeffs2;
 	fs["intrinsics"] >> intrinsics;
 	fs["distorsion"] >> distCoeffs;
+	fs["intrinsics2"] >> intrinsics2;
+	fs["distorsion2"] >> distCoeffs2;
 	if ((!intrinsics.data) || (!distCoeffs.data))
 	{
 		cout << "Failed to load cameras calibration parameters" << endl;
 		return -1;
+	}
+	if ((!intrinsics2.data) || (!distCoeffs2.data)) {
+		intrinsics2 = intrinsics;
+		distCoeffs2 = distCoeffs;
 	}
 	int groupNum;
 	Tools::readGroupNumFile(groupNum);
@@ -161,19 +160,16 @@ int Decode::executeDecode() {
 						return -1;
 					}
 					Mat pointcloud_tresh, color_tresh;
+					VirtualCamera camera1(intrinsics, distCoeffs, R1, T1);
+					VirtualCamera camera2(intrinsics2, distCoeffs2, R2, T2);
+					cout << "Analyzing " << i << " and " << j << endl;
 					if (isUnderWorld) {
-						VirtualCamera camera1(intrinsics, distCoeffs, R1, T1);
-						VirtualCamera camera2(intrinsics, distCoeffs, R2, T2);
 						vector<Point3f> pointclouds;
 						vector<Vec3f> colors;
 						UnderworldRcns::decodeTwoGroupOfImg(imagelist, camera1, camera2, i, pointclouds, colors);
 					}
 					else {
-						getRAndTBetweenTwoCamera(R2, T2, R1, T1, R, T);
-						cout << "Analyzing " << i << " and " << j << endl;
-						cout << R << endl;
-						cout << T << endl;
-						OpencvRcns::decodeTwoGroupOfImg(graycode, imagelist, intrinsics, distCoeffs, R, T, i, pointcloud_tresh, color_tresh);
+						OpencvRcns::decodeTwoGroupOfImg(graycode, imagelist, camera1, camera2, i, pointcloud_tresh, color_tresh);
 					}
 					transformPointCloud(R1, T1, pointcloud_tresh);
 					ostringstream countStrI;

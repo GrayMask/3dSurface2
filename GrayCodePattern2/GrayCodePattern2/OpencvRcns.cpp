@@ -9,6 +9,7 @@
 #include "Path.h"
 #include "Const.h"
 #include "Tools.h"
+#include "VirtualCamera.h"
 #include "VizHelper.h"
 
 using namespace cv;
@@ -18,6 +19,14 @@ using namespace std;
 bool sort_by_value(const float& obj1, const float& obj2)
 {
 	return obj1 < obj2;
+}
+
+/* Camera 1 is origin*/
+static void getRAndTBetweenTwoCamera(const Mat& R1, const Mat& T1, const Mat& R2, const Mat& T2, Mat& R, Mat& T) {
+	Mat R2T;
+	transpose(R2, R2T);
+	R = R1 * R2T;
+	T = T1 - R * T2;
 }
 
 static int optimizeDisparityMap(const Mat disparityMap, Mat& result)
@@ -61,7 +70,7 @@ static void modifyCameraCoord(const Mat& R, Mat& pointcloud) {
 	}
 }
 
-void OpencvRcns::decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, const Mat& intrinsics, const Mat& distCoeffs, const Mat& R, const Mat& T, const int count, Mat& pointcloud_tresh, Mat& color_tresh) {
+void OpencvRcns::decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern>& graycode, const vector<string>& imagelist, VirtualCamera& camera1, VirtualCamera& camera2, const int count, Mat& pointcloud_tresh, Mat& color_tresh) {
 		size_t numberOfPatternImages = graycode->getNumberOfPatternImages();
 		vector<vector<Mat>> captured_pattern;
 		captured_pattern.resize(2);
@@ -71,14 +80,22 @@ void OpencvRcns::decodeTwoGroupOfImg(const Ptr<structured_light::GrayCodePattern
 		Size imagesSize = color.size();
 		// Stereo rectify
 		cout << "Rectifying images..." << endl;
-		Mat R1, R2, P1, P2, Q;
+		Mat R1, R2, P1, P2, Q, R, T, I1, I2, D1, D2;
 		Rect validRoi[2];
-
-		stereoRectify(intrinsics, distCoeffs, intrinsics, distCoeffs, imagesSize, R, T, R1, R2, P1, P2, Q, 0,
+		getRAndTBetweenTwoCamera(camera1.rotationMatrix, camera1.translationVector, camera2.rotationMatrix, camera2.translationVector, R, T);
+		cout << R << endl;
+		cout << T << endl;
+		R.convertTo(R, CV_64F);
+		T.convertTo(T, CV_64F);
+		camera1.cameraMatrix.convertTo(I1, CV_64F); 
+		camera1.distortion.convertTo(D1, CV_64F); 
+		camera2.cameraMatrix.convertTo(I2, CV_64F);
+		camera2.distortion.convertTo(D2, CV_64F);
+		stereoRectify(I1, D1, I2, D2, imagesSize, R, T, R1, R2, P1, P2, Q, 0,
 			-1, imagesSize, &validRoi[0], &validRoi[1]);
 		Mat map1x, map1y, map2x, map2y;
-		initUndistortRectifyMap(intrinsics, distCoeffs, R1, P1, imagesSize, CV_32FC1, map1x, map1y);
-		initUndistortRectifyMap(intrinsics, distCoeffs, R2, P2, imagesSize, CV_32FC1, map2x, map2y);
+		initUndistortRectifyMap(I1, D1, R1, P1, imagesSize, CV_32FC1, map1x, map1y);
+		initUndistortRectifyMap(I2, D2, R2, P2, imagesSize, CV_32FC1, map2x, map2y);
 		// Loading pattern images
 		for (size_t i = 0; i < numberOfPatternImages; i++)
 		{

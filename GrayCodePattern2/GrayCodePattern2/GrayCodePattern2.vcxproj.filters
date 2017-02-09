@@ -33,16 +33,16 @@
     <ClInclude Include="Tools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpencvRcns.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UnderworldRcns.h">
+    <ClInclude Include="VirtualCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VizHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VirtualCamera.h">
+    <ClInclude Include="OpencvRcns.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnderworldRcns.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,10 +68,10 @@
     <ClCompile Include="Path.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpencvRcns.cpp">
+    <ClCompile Include="VizHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VizHelper.cpp">
+    <ClCompile Include="OpencvRcns.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UnderworldRcns.cpp">
