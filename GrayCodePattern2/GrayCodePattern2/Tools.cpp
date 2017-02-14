@@ -7,14 +7,13 @@
 #include "Const.h"
 #include "Path.h"
 
-using namespace cv;
 using namespace std;
 
 
 #define cvQueryHistValue_1D( hist, idx0 ) \
     ((float)cvGetReal1D( (hist)->bins, (idx0)))
 
-int Tools::copyFile(const String fromFile, const String toFile) {
+int Tools::copyFile(const cv::String fromFile, const cv::String toFile) {
 	fstream in(fromFile, ios::in | ios::binary);
 	if (!in)
 	{
@@ -42,7 +41,7 @@ int Tools::copyFile(const String fromFile, const String toFile) {
 	out.close();
 }
 
-int Tools::writePic(const Mat& im, const String& fname)
+int Tools::writePic(const cv::Mat& im, const cv::String& fname)
 {
 	ofstream ouF;
 	ouF.open(fname.c_str());
@@ -89,20 +88,20 @@ int Tools::readGroupNumFile(int& groupNum)
 	return 1;
 }
 
-int Tools::readStringList(String& filename, vector<string>& l) {
-	FileStorage fs(filename, FileStorage::READ);
+int Tools::readStringList(cv::String& filename, vector<string>& l) {
+	cv::FileStorage fs(filename, cv::FileStorage::READ);
 	if (!fs.isOpened())
 	{
 		cerr << "failed to open " << filename << endl;
 		return -1;
 	}
-	FileNode n = fs.getFirstTopLevelNode();
-	if (n.type() != FileNode::SEQ)
+	cv::FileNode n = fs.getFirstTopLevelNode();
+	if (n.type() != cv::FileNode::SEQ)
 	{
 		cerr << "cam 1 images are not a sequence! FAIL" << endl;
 		return -1;
 	}
-	FileNodeIterator it = n.begin(), it_end = n.end();
+	cv::FileNodeIterator it = n.begin(), it_end = n.end();
 	for (; it != it_end; ++it)
 	{
 		l.push_back((string)*it);
@@ -123,7 +122,7 @@ bool goWithLine(ifstream & in, int line)
 	return true;
 }
 
-int Tools::getSFMResult(const int count, Mat& R, Mat& T) {
+int Tools::getSFMResult(const int count, cv::Mat& R, cv::Mat& T) {
 	R.create(3,3,CV_64F);
 	T.create(3, 1, CV_64F);
 	double num;
@@ -135,7 +134,7 @@ int Tools::getSFMResult(const int count, Mat& R, Mat& T) {
 	}
 	ostringstream countStr;
 	countStr << count;
-	String targetPathStr = countStr.str() + imgType;
+	cv::String targetPathStr = countStr.str() + imgType;
 	const char* targetPath = targetPathStr.c_str();
 	// goto line 19
 	if (goWithLine(in, 19)) {
@@ -161,7 +160,7 @@ int Tools::getSFMResult(const int count, Mat& R, Mat& T) {
 	return 0;
 }
 
-void Tools::myCalcHist(Mat gray_plane)
+void Tools::myCalcHist(cv::Mat gray_plane)
 {
 	IplImage *src;
 	src = &IplImage(gray_plane);
@@ -191,4 +190,49 @@ void Tools::myCalcHist(Mat gray_plane)
 	cvGetMinMaxHistValue(gray_hist, 0, &max_value, 0, 0);
 	cvNamedWindow("H-S Histogram", 1);
 	cvShowImage("H-S Histogram", hist_image);
+}
+
+void Tools::saveCamsPixelsForReconstuction(vector<cv::Point> *camPixels, int num) {
+	ofstream ouF;
+	ostringstream numStr;
+	numStr << num;
+	ouF.open((root_dir + sfm_dir + numStr.str() + ".pxl").c_str());
+	int sz = proj_width * proj_height;
+	for (int i = 0; i < sz; i++) {
+		vector<cv::Point> points = camPixels[i];
+		int pointSz = points.size();
+		for (int j = 0; j < pointSz; j++) {
+			cv::Point point = points[j];
+			ouF << point.x << " " << point.y << " ";
+		}
+		ouF << "-1 ";
+	}
+	ouF.close();
+}
+
+void Tools::loadCamsPixelsForReconstuction(vector<vector<cv::Point>>& camPixels, int num) {
+	camPixels.resize(0);
+	ifstream inF;
+	ostringstream numStr;
+	numStr << num;
+	inF.open((root_dir + sfm_dir + numStr.str() + ".pxl").c_str());
+	int sz = proj_width * proj_height;
+	string line;
+	int x;
+	int y;
+	for (int i = 0; i < sz; i++) {
+		vector<cv::Point> points;
+		points.resize(0);
+		while (1) {
+			inF >> x;
+			if (x == -1) {
+				break;
+			}
+			inF >> y;
+			cv::Point point(x, y);
+			points.push_back(point);
+		}
+		camPixels.push_back(points);
+	}
+	inF.close();
 }

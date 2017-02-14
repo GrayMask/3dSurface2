@@ -3,8 +3,8 @@
 <Projector><Width>1024</Width>
   <Height>768</Height></Projector>
 <Camera><ID>0</ID>
-  <Width>640</Width>
-  <Height>480</Height></Camera>
+  <Width>800</Width>
+  <Height>600</Height></Camera>
 <ProjectorWindow><Position><x>300</x>
     <y>-20</y></Position></ProjectorWindow>
 <Reconstruction><AutoContrast>0</AutoContrast>

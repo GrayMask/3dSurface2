@@ -8,5 +8,6 @@ class Tools
 {
 public:
 	static void readPointCloud(char* filename, CVectorDouble& xs, CVectorDouble& ys, CVectorDouble& zs);
+	static void readPointCloud(CVectorDouble& xs, CVectorDouble& ys, CVectorDouble& zs);
 };
 #endif

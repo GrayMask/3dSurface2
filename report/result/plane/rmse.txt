@@ -1,0 +1,13 @@
+
+Num of points
+
+	| opencv	| 3dunderworld	|
+01	| 297109	| 397672	|
+02	| 211499	| 227711	|
+
+
+RMSE
+
+	| opencv	| 3dunderworld	|
+01	| 2.10316	| 0.74907	|
+02	| 5.74816	| 0.94459	|

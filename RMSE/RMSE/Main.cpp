@@ -11,7 +11,8 @@ void main() {
 	vector<pair<size_t, TPlane>> planes;
 
 	CVectorDouble xs, ys, zs;
-	Tools::readPointCloud("E:\\japan\\research\\3dsurface2\\3dSurface2\\expr9\\01pointCloud.ply", xs, ys, zs);
+	//Tools::readPointCloud(xs, ys, zs);
+	Tools::readPointCloud("D:\\document\\project\\3dSurface2\\code\\report\\result\\plane\\3dunderworld02.ply", xs, ys, zs);
 	ransac.TestRANSACPlanes(planes, xs, ys, zs);
 	double result = rmse.calcRmse(planes[0].second, xs, ys, zs);
 	cout << result << endl;

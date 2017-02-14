@@ -44,3 +44,32 @@ void Tools::readPointCloud(char* filename, CVectorDouble& xs, CVectorDouble& ys,
 	}
 	return;
 }
+
+void Tools::readPointCloud(CVectorDouble& xs, CVectorDouble& ys, CVectorDouble& zs) {
+	randomGenerator.randomize();
+
+	// Generate random points:
+	// ------------------------------------
+
+	const size_t N_plane = 300;
+	const size_t N_noise = 300;
+
+	const double PLANE_EQ[4] ={ 0,-1,1, +2 };
+
+	for (size_t i = 0; i<N_plane; i++)
+	{
+		const double xx = randomGenerator.drawUniform(-3, 3) + 5 * cos(0.4);
+		const double yy = randomGenerator.drawUniform(-3, 3) + 5 * sin(0.4);
+		const double zz = -(PLANE_EQ[3] + PLANE_EQ[0] * xx + PLANE_EQ[1] * yy) / PLANE_EQ[2];
+		xs.push_back(xx);
+		ys.push_back(yy);
+		zs.push_back(zz);
+	}
+
+	for (size_t i = 0; i<N_noise; i++)
+	{
+		xs.push_back(randomGenerator.drawUniform(-7, 7));
+		ys.push_back(randomGenerator.drawUniform(-7, 7));
+		zs.push_back(randomGenerator.drawUniform(-7, 7));
+	}
+}

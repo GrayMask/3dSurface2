@@ -49,6 +49,23 @@ static void transformPointCloud(const Mat& R, const Mat& T, Mat& pointcloud) {
 	}
 }
 
+static void savePointCloudVector(vector<cv::Point3f>& pointcloud_tresh, vector<Vec3f>& color_tresh, String fileName) {
+
+	ofstream out(root_dir + expr_dir + fileName);
+	if (out.is_open())
+	{
+		int pointCount = pointcloud_tresh.size();
+		out << "ply\nformat ascii 1.0\ncomment Kinect v1 generated\nelement vertex " << pointCount << "\nproperty double x\nproperty double y\nproperty double z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\nend_header\n";
+		for (int i = 0; i<pointCount; i++) {
+			Point3f point = pointcloud_tresh[i];
+			Vec3f color = color_tresh[i];
+			out << point.x << " " << point.y << " " << point.z
+				<< " " << (int)color[2] << " " << (int)color[1] << " " << (int)color[0] << "\n";
+		}
+		out.close();
+	}
+}
+
 struct Point3dRGB {
 	cv::Point3d point;
 	uchar r;
@@ -163,22 +180,23 @@ int Decode::executeDecode() {
 					VirtualCamera camera1(intrinsics, distCoeffs, R1, T1);
 					VirtualCamera camera2(intrinsics2, distCoeffs2, R2, T2);
 					cout << "Analyzing " << i << " and " << j << endl;
-					if (isUnderWorld) {
-						vector<Point3f> pointclouds;
-						vector<Vec3f> colors;
-						UnderworldRcns::decodeTwoGroupOfImg(imagelist, camera1, camera2, i, pointclouds, colors);
-					}
-					else {
-						OpencvRcns::decodeTwoGroupOfImg(graycode, imagelist, camera1, camera2, i, pointcloud_tresh, color_tresh);
-					}
-					transformPointCloud(R1, T1, pointcloud_tresh);
 					ostringstream countStrI;
 					ostringstream countStrJ;
 					countStrI << i;
 					countStrJ << j;
-					savePointCloud(pointcloud_tresh, color_tresh, countStrI.str() + countStrJ.str() + ply_file);
-					pointcloudArr.push_back(pointcloud_tresh);
-					colorArr.push_back(color_tresh);
+					if (isUnderWorld) {
+						vector<Point3f> pointclouds;
+						vector<Vec3f> colors;
+						UnderworldRcns::decodeTwoGroupOfImg(imagelist, camera1, camera2, i,j, pointclouds, colors);
+						savePointCloudVector(pointclouds, colors, countStrI.str() + countStrJ.str() + ply_file);
+					}
+					else {
+						OpencvRcns::decodeTwoGroupOfImg(graycode, imagelist, camera1, camera2, i, pointcloud_tresh, color_tresh);
+						transformPointCloud(R1, T1, pointcloud_tresh);
+						savePointCloud(pointcloud_tresh, color_tresh, countStrI.str() + countStrJ.str() + ply_file);
+						pointcloudArr.push_back(pointcloud_tresh);
+						colorArr.push_back(color_tresh);
+					}
 					break;
 				}
 			}
@@ -186,5 +204,5 @@ int Decode::executeDecode() {
 		}
 	}
 	//savePointCloud(pointcloudArr, colorArr, ply_file);
-	VizHelper::showPointCloud(pointcloudArr, colorArr);
+	//VizHelper::showPointCloud(pointcloudArr, colorArr);
 }

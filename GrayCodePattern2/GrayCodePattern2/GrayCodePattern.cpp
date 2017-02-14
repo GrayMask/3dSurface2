@@ -8,8 +8,8 @@
 #include "Const.h"
 #include "Tools.h"
 
-using namespace cv;
 using namespace std;
+using namespace cv;
 
 void GrayCodePattern::getGrayCodeImages()
 {

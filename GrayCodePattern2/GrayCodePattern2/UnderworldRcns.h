@@ -7,6 +7,6 @@ using namespace std;
 class UnderworldRcns
 {
 public:
-	static void decodeTwoGroupOfImg(const vector<string>& imagelist, VirtualCamera& camera1, VirtualCamera& camera2, const int count, vector<Point3f>& pointcloud_tresh, vector<Vec3f>& color_tresh);
+	static void decodeTwoGroupOfImg(const vector<string>& imagelist, VirtualCamera& camera1, VirtualCamera& camera2, int i, int j, vector<Point3f>& pointcloud_tresh, vector<Vec3f>& color_tresh);
 };
 #endif
