@@ -42,13 +42,13 @@
     <ClInclude Include="UnderworldRcns.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utilities.h">
+    <ClInclude Include="FeaturePoints.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="points.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FeaturePoints.h">
+    <ClInclude Include="Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Reconstruction.h">
@@ -86,10 +86,10 @@
     <ClCompile Include="VirtualCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utilities.cpp">
+    <ClCompile Include="FeaturePoints.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FeaturePoints.cpp">
+    <ClCompile Include="Utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Reconstruction.cpp">

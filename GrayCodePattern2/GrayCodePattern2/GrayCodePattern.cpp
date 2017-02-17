@@ -1,5 +1,6 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/structured_light.hpp>
+#include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
 #include <io.h>
 #include <direct.h>
@@ -47,12 +48,12 @@ void GrayCodePattern::getGrayCodeImages()
 	}
 	// Turning off autofocus
 	//cap1.set(CAP_PROP_SETTINGS, 1);
-	cap1.set(CV_CAP_PROP_FPS, cam_fps);
+	cap1.set(CV_CAP_PROP_EXPOSURE, cam_exp);
 	cap1.set(CV_CAP_PROP_FRAME_WIDTH, cam_width);
 	cap1.set(CV_CAP_PROP_FRAME_HEIGHT, cam_height);
 	VideoCapture cap2(0);
 	if (isStereoCamera) {
-		cap2.set(CV_CAP_PROP_FPS, cam_fps);
+		cap2.set(CV_CAP_PROP_EXPOSURE, cam_exp);
 		cap2.set(CV_CAP_PROP_FRAME_WIDTH, cam_width);
 		cap2.set(CV_CAP_PROP_FRAME_HEIGHT, cam_height);
 	}
@@ -90,14 +91,17 @@ void GrayCodePattern::getGrayCodeImages()
 			{
 				cout << "Waiting to save image number " << i + 1 << endl << "Press any key to acquire the photo" << endl;
 				imshow("Pattern Window", pattern[i]);
-				Mat frame1, frame2;
+				Mat frame1, frame2, showFrame1, showFrame2;
 				while (1)
 				{
 					cap1 >> frame1;  // get a new frame from camera 1
-					imshow("cam1", frame1);
+					resize(frame1, showFrame1, Size(cam_width/2, cam_height/2), 0, 0, 3);
+					imshow("cam1", showFrame1);
 					if (isStereoCamera) {
 						cap2 >> frame2;
-						imshow("cam2", frame2);
+						resize(frame2, showFrame2, Size(cam_width / 2, cam_height / 2), 0, 0, 3);
+						imshow("cam2", showFrame2);
+
 					}
 					int key = waitKey(1);
 					if (key == 115)

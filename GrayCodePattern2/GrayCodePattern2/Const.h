@@ -5,7 +5,7 @@ extern const int proj_height;
 
 extern const int cam_width;
 extern const int cam_height;
-extern const int cam_fps;
+extern const int cam_exp;
 
 extern const bool isStereoCamera;
 
