@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <opencv2/calib3d.hpp>
-#include "Decode.h"
+#include "Reconstruction.h"
 #include "Path.h"
 #include "Const.h"
 #include "Tools.h"
@@ -126,7 +126,7 @@ static void savePointCloud(InputArray pointcloud, InputArray color, String fileN
 	}
 }
 
-int Decode::executeDecode() {
+int Reconstruction::executeReconstruction() {
 	structured_light::GrayCodePattern::Params params;
 	params.width = proj_width;
 	params.height = proj_height;

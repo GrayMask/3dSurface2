@@ -1,12 +1,12 @@
 #include "GrayCodePattern.h"
 #include "Sfm.h"
-#include "Decode.h"
+#include "Reconstruction.h"
 #include <opencv2/core.hpp>
 using namespace std;
 
 int main(int argh, char* argv[])
 {
-	//GrayCodePattern::getGrayCodeImages();
+	GrayCodePattern::getGrayCodeImages();
 	//Sfm::executeSfm();
-	Decode::executeDecode();
+	//Decode::executeDecode();
 }

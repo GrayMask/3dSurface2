@@ -46,12 +46,13 @@ void GrayCodePattern::getGrayCodeImages()
 		int result = _mkdir((root_dir + expr_dir).c_str());
 	}
 	// Turning off autofocus
-	cap1.set(CAP_PROP_SETTINGS, 1);
+	//cap1.set(CAP_PROP_SETTINGS, 1);
+	cap1.set(CV_CAP_PROP_FPS, cam_fps);
 	cap1.set(CV_CAP_PROP_FRAME_WIDTH, cam_width);
 	cap1.set(CV_CAP_PROP_FRAME_HEIGHT, cam_height);
-	VideoCapture cap2(1);
+	VideoCapture cap2(0);
 	if (isStereoCamera) {
-		cap2.set(CAP_PROP_SETTINGS, 1);
+		cap2.set(CV_CAP_PROP_FPS, cam_fps);
 		cap2.set(CV_CAP_PROP_FRAME_WIDTH, cam_width);
 		cap2.set(CV_CAP_PROP_FRAME_HEIGHT, cam_height);
 	}
@@ -93,10 +94,11 @@ void GrayCodePattern::getGrayCodeImages()
 				while (1)
 				{
 					cap1 >> frame1;  // get a new frame from camera 1
+					imshow("cam1", frame1);
 					if (isStereoCamera) {
 						cap2 >> frame2;
+						imshow("cam2", frame2);
 					}
-					//imshow("cam1", frame1);
 					int key = waitKey(1);
 					if (key == 115)
 					{

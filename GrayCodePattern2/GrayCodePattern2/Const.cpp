@@ -4,13 +4,14 @@
 extern const int proj_width = 1024;
 extern const int proj_height = 768;
 
-extern const int cam_width = 800;// 1280;//800;//4896;
-extern const int cam_height = 600;// 720;//600;//3264;
+extern const int cam_width = 1280;// 1280;//800;//4896;
+extern const int cam_height = 960;// 720;//600;//3264;
+extern const int cam_fps = 300;
 
-extern const bool isStereoCamera = true;
+extern const bool isStereoCamera = false;
 
 // dir
-extern const cv::String exprNum = "6";
+extern const cv::String exprNum = "13";
 extern const cv::String expr_dir = "expr" + exprNum + "\\";
 extern const cv::String calib_file = "calibration_result\\camera2.xml";
 extern const cv::String disparityMap_file = "matlab\\disparityMap" + exprNum;
