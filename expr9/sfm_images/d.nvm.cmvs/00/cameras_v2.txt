@@ -1,0 +1,46 @@
+# Camera parameter file. 
+
+# The format of each camera is as follows:
+# Filename (of the undistorted image in visualize folder)
+# Original filename
+# Focal Length (of the undistorted image)
+# 2-vec Principal Point (image center)
+# 3-vec Translation T (as in P = K[R T])
+# 3-vec Camera Position C (as in P = K[R -RC])
+# 3-vec Axis Angle format of R
+# 4-vec Quaternion format of R
+# 3x3 Matrix format of R
+# [Normalized radial distortion] = [radial distortion] * [focal length]^2
+# 3-vec Lat/Lng/Alt from EXIF
+
+# The nubmer of cameras in this reconstruction
+6
+
+00000003.jpg
+E:\japan\research\3dsurface2\3dSurface2\expr7\sfm_images\1.jpg
+1060.99987793
+400 300
+-2.5753432243599229e+02 -1.6103507912995433e+01 5.2174408941976196e+01
+-3.41280642351 -0.0104074569135 -1.3360097379
+0.00345393423065 -0.132797848641 0.00623810908414
+0.997790103491 0.00172569478827 -0.0663500055272 0.00311675660748
+9.2876929912550921e-01 -2.8637949568961627e-02 3.6955034412972210e-01
+4.0125510062739754e-02 9.9891979408550957e-01 -2.3434769603477928e-02
+-3.6848002991222661e-01 3.6593890591856082e-02 9.2891514936900232e-01
+-0.162761343459
+0 0 0
+
+00000004.jpg
+E:\japan\research\3dsurface2\3dSurface2\expr7\sfm_images\0.jpg
+1043.95251465
+400 300
+0 0 0
+-4.62951866708 -1.38777878078e-017 -0.979181928366
+0.00323353837947 -0.275761236924 0.00306774275284
+0.99050701394 0.00161164995553 -0.137444042121 0.00152901462454
+1. 0. 0.
+0. 1. 0.
+0. 0. 1.
+-0.193020520537
+0 0 0
+
