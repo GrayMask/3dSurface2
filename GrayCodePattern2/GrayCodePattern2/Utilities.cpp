@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------------------------------------
-//* Copyright © 2010-2013 Immersive and Creative Technologies Lab, Cyprus University of Technology           *
+//* Copyright ?2010-2013 Immersive and Creative Technologies Lab, Cyprus University of Technology           *
 //* Link: http://ict.cut.ac.cy                                                                               *
 //* Software developer(s): Kyriakos Herakleous                                                               *
 //* Researcher(s): Kyriakos Herakleous, Charalambos Poullis                                                  *
