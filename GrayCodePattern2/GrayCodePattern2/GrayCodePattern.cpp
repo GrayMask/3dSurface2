@@ -35,7 +35,7 @@ void GrayCodePattern::getGrayCodeImages()
 	moveWindow("Pattern Window", params.width + 316, -20);
 	setWindowProperty("Pattern Window", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
 	// Open camera number 1, using libgphoto2
-	VideoCapture cap1(0);
+	VideoCapture cap1(1);
 	if (!cap1.isOpened())
 	{
 		// check if cam1 opened
