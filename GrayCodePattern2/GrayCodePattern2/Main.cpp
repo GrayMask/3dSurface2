@@ -6,7 +6,7 @@ using namespace std;
 
 int main(int argh, char* argv[])
 {
-	GrayCodePattern::getGrayCodeImages();
+	//GrayCodePattern::getGrayCodeImages();
 	//Sfm::executeSfm();
-	//Reconstruction::executeReconstruction();
+	Reconstruction::executeReconstruction();
 }
