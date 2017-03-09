@@ -83,7 +83,7 @@ void Ransac::TestRANSACPlanes(vector<pair<size_t, TPlane>>& detectedPlanes, CVec
 {
 	// Run RANSAC
 	// ------------------------------------
-	const double DIST_THRESHOLD = 0.7;
+	const double DIST_THRESHOLD = 6;
 	CTicTac	tictac;
 
 		//math::RANSAC_Template<double>::execute(

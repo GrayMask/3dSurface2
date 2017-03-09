@@ -11,7 +11,7 @@ extern const int cam_exp = 1;
 extern const bool isStereoCamera = true;
 
 // dir
-extern const cv::String exprNum = "14";
+extern const cv::String exprNum = "13";
 extern const cv::String expr_dir = "expr" + exprNum + "\\";
 extern const cv::String calib_file = "calibration_result\\camera6.xml";
 extern const cv::String disparityMap_file = "matlab\\disparityMap" + exprNum;
@@ -32,10 +32,10 @@ extern const size_t black_thresh = 40;
 extern const bool isRemap = true;
 
 // Optimize disparity map
-extern const bool isOptimize = true;
+extern const bool isOptimize = false;
 extern const float downPortion = 0.001;
 extern const float upPortion = 0.999;
 
 extern const bool isShowResult = false;
 
-extern const bool isUnderWorld = false;
+extern const bool isUnderWorld = true;
