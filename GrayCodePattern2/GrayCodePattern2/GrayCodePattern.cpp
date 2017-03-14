@@ -35,7 +35,7 @@ void GrayCodePattern::getGrayCodeImages()
 	moveWindow("Pattern Window", params.width + 316, -20);
 	setWindowProperty("Pattern Window", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
 	// Open camera number 1, using libgphoto2
-	VideoCapture cap1(1);
+	VideoCapture cap1(0);
 	if (!cap1.isOpened())
 	{
 		// check if cam1 opened
@@ -48,12 +48,12 @@ void GrayCodePattern::getGrayCodeImages()
 	}
 	// Turning off autofocus
 	//cap1.set(CAP_PROP_SETTINGS, 1);
-	cap1.set(CV_CAP_PROP_EXPOSURE, cam_exp);
+	//cap1.set(CV_CAP_PROP_EXPOSURE, cam_exp);
 	cap1.set(CV_CAP_PROP_FRAME_WIDTH, cam_width);
 	cap1.set(CV_CAP_PROP_FRAME_HEIGHT, cam_height);
-	VideoCapture cap2(0);
+	VideoCapture cap2(1);
 	if (isStereoCamera) {
-		cap2.set(CV_CAP_PROP_EXPOSURE, cam_exp);
+		//cap2.set(CV_CAP_PROP_EXPOSURE, cam_exp);
 		cap2.set(CV_CAP_PROP_FRAME_WIDTH, cam_width);
 		cap2.set(CV_CAP_PROP_FRAME_HEIGHT, cam_height);
 	}

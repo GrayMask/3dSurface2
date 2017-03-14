@@ -6,12 +6,12 @@ extern const int proj_height = 768;
 
 extern const int cam_width = 1280;// 1280;//800;//4896;
 extern const int cam_height = 960;// 720;//600;//3264;
-extern const int cam_exp = 1;
+extern const int cam_exp = 200;
 
 extern const bool isStereoCamera = true;
 
 // dir
-extern const cv::String exprNum = "13";
+extern const cv::String exprNum = "15";
 extern const cv::String expr_dir = "expr" + exprNum + "\\";
 extern const cv::String calib_file = "calibration_result\\camera6.xml";
 extern const cv::String disparityMap_file = "matlab\\disparityMap" + exprNum;
