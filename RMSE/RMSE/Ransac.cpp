@@ -83,7 +83,7 @@ void Ransac::TestRANSACPlanes(vector<pair<size_t, TPlane>>& detectedPlanes, CVec
 {
 	// Run RANSAC
 	// ------------------------------------
-	const double DIST_THRESHOLD = 3;
+	const double DIST_THRESHOLD = 6;
 	CTicTac	tictac;
 
 		//math::RANSAC_Template<double>::execute(
@@ -100,7 +100,7 @@ void Ransac::TestRANSACPlanes(vector<pair<size_t, TPlane>>& detectedPlanes, CVec
 		//);
 	ransac_detect_3D_planes(xs, ys, zs, detectedPlanes, DIST_THRESHOLD, 5000);
 	// Display output:
-	cout << "RANSAC method: ransac_detect_3D_planes" << endl;
+	//cout << "RANSAC method: ransac_detect_3D_planes" << endl;
 	cout << " Computation time: " << tictac.Tac()*1000.0 << " ms" << endl;
 	cout << " " << detectedPlanes.size() << " planes detected." << endl;
 }

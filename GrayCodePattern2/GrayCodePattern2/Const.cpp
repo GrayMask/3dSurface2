@@ -32,10 +32,10 @@ extern const size_t black_thresh = 40;
 extern const bool isRemap = true;
 
 // Optimize disparity map
-extern const bool isOptimize = true;
+extern const bool isOptimize = false;
 extern const float downPortion = 0.001;
 extern const float upPortion = 0.999;
 
 extern const bool isShowResult = false;
 
-extern const bool isUnderWorld = false;
+extern const bool isUnderWorld = true;

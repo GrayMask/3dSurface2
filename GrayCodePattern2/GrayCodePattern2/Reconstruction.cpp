@@ -42,9 +42,11 @@ static void transformPointCloud(const Mat& R, const Mat& T, Mat& pointcloud) {
 	for (int i = 0; i < sz.height; i++) {
 		for (int j = 0; j < sz.width; j++) {
 			Vec3f x = pointcloud.at<Vec3f>(i, j);
-			Mat ym = RT * (Mat(x) - T_);
-			Vec3f y = (Vec3f) Mat(ym);
-			pointcloud.at<Vec3f>(i, j) = y;
+			if (x[0] != 0 || x[1] != 0 || x[2] != 0) {
+				Mat ym = RT * (Mat(x) - T_);
+				Vec3f y = (Vec3f)Mat(ym);
+				pointcloud.at<Vec3f>(i, j) = y;
+			}
 		}
 	}
 }
